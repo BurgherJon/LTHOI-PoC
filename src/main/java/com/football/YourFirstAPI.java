@@ -118,7 +118,7 @@ public class YourFirstAPI
 			
 		} 
 		catch (ClassNotFoundException e) {
-			System.out.println("Failed on setting Class - Remote Modification");
+			System.out.println("Failed on setting Class - Remote Modification 2");
 			e.printStackTrace();
 		}
 		
