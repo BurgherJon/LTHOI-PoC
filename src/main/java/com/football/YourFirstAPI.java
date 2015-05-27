@@ -26,16 +26,18 @@ import java.sql.*;
 
 import com.google.appengine.api.utils.SystemProperty;
 
-@Api(name="leagueadmin",version="v1", description="An API to manage the leagues")
+@Api(name="leagueadmin",version="v1",description="An API to manage the leagues")
 
 public class YourFirstAPI
 {
 
-	public static List<League> leagues = new ArrayList<League>();
+	
 
 	@ApiMethod(name="list")
 	public List<League> getLeagues ()
 	{
+		List<League> leagues = new ArrayList<League>();
+		leagues.add(new League(0, "Working"));
 		return leagues;
 	}
 	
@@ -130,7 +132,7 @@ public class YourFirstAPI
 			strquery = "INSERT INTO bedb1.Leagues (id, name) VALUES("+id+", '"+name+"');";
 			conn.createStatement().executeUpdate(strquery);
 	        conn.close();
-			return new League(0, strquery);
+			return new League(1000, "Success");
 		} 
 		catch (SQLException e) 
 		{
