@@ -25,21 +25,6 @@
     "maxAge" : 0
   },
   "methods" : {
-    "leagueadmin.list" : {
-      "path" : "leaguecollection",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.getLeagues",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "leagueadmin.add" : {
       "path" : "addLeague/{id}/{name}",
       "httpMethod" : "POST",
@@ -62,7 +47,22 @@
         "body" : "empty"
       },
       "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "leagueadmin.list" : {
+      "path" : "leaguecollection",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.getLeagues",
+      "request" : {
         "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
       }
     },
     "leagueadmin.getLeague" : {
@@ -112,12 +112,15 @@
       }
     },
     "methods" : {
+      "com.football.YourFirstAPI.addLeague" : {
+        "response" : {
+          "$ref" : "League"
+        }
+      },
       "com.football.YourFirstAPI.getLeagues" : {
         "response" : {
           "$ref" : "LeagueCollection"
         }
-      },
-      "com.football.YourFirstAPI.addLeague" : {
       },
       "com.football.YourFirstAPI.getLeague" : {
         "response" : {

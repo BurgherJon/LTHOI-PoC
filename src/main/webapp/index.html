@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Testing Football App</title>
+</head>
+<body>
+ 
+    <form action="javascript:void(0);">
+        <h2>List Leagues</h2>
+        <div><input id="listLeagues" type="submit" value="List Leagues"></div>
+    </form>
+    <div id="listLeaguesResult">test</div>
+    
+    <form action="javascript:void(0);">
+      <h2>Insert New League</h2>
+         <div><input id="leagueID" placeholder="4"></input></div>
+         <div><input id="leagueName" placeholder="Steelers123456"></input></div>
+         <div><input id="insertLeague" type="submit" value="Insert League"></div>
+    </form>
+    
+    <script type="text/javascript">
+        function init() {
+                //Parameters are APIName,APIVersion,CallBack function,API Root 
+                gapi.client.load('leagueadmin', 'v1', null, 'https://focal-acronym-94611.appspot.com/_ah/api');
+                
+                document.getElementById('listLeagues').onclick = function() {
+                    getLeagues();
+                  }
+                
+                document.getElementById('insertLeague').onclick = function() {
+                        insertLeague();
+                }
+                
+        }
+        
+        //List Quotes function that will execute the listQuote call
+        function getLeagues() {
+                gapi.client.leagueadmin.list().execute(function(resp) {
+                	document.getElementById('listLeaguesResult').innerHTML = "js working";
+                		if (!resp.code) {
+                                resp.items = resp.items || [];
+                                var result = "";
+                                for (var i=0;i<resp.items.length;i++) {
+                                        result = result + resp.items[i].name + "  " + "[" + resp.items[i].id + "]" + "<br/>";
+                                }
+                                //document.getElementById('listLeaguesResult').innerHTML = result;
+                        }
+                });
+        }
+        
+        //Insert Quote function
+        function insertLeague() {
+                //Validate the entries
+                var _Name = document.getElementById('leagueName').value;
+                var _Id = document.getElementById('leagueID').value;
+                
+                //Build the Request Object
+                var requestData = {};
+                requestData.name = _Name;
+                requestData.id = _Id;
+                gapi.client.leagueadmin.add(requestData).execute(function(resp) {
+                        if (!resp.code) 
+                        {
+                        	resp.items = resp.items || [];
+                            var result = "";
+                            for (var i=0;i<resp.items.length;i++) 
+                            {
+                                    result = result + resp.items[i].name + "  " + "[" + resp.items[i].id + "]" + "<br/>";
+                            }
+                            document.getElementById('listLeaguesResult').innerHTML = result;
+                        }
+                });
+        }
+        
+ 
+
+        
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=init"></script>
+</body>
+</html>
