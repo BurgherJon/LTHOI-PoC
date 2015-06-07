@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leave the House Out of It!!!</title>
+    <style> table, th, td {border: 1px solid black;}
+</style>
+</head>
+<body> 
+ 
+    <table style="width:100%">
+    	<tr>
+    		<td style="width:80%" align="center">
+       			Welcome to the Football Gambling App That Doesn't Have a House!
+       		</td>
+       		<td style="width:20%">
+       			<div id="username">loading...</div>
+       		</td>
+    	</tr>
+    	<tr>
+    		<td>Content Window!!!  Wouldn't it be cool if there were content here?
+    <form action="javascript:void(0);">
+        <h2>List Leagues</h2>
+        <div><input id="listLeagues" type="submit" value="List Leagues"></div>
+    </form>
+    <div id="debug"></div>
+    		
+    		</td>
+    		<td>Right Side Bar</td>
+    	</tr>
+    </table>
+    
+    
+    
+    <script type="text/javascript">
+        function init() 
+        {
+                //Checking when we're done loading the API so we don't call it before it's ready.
+                var apisToLoad;
+  				var loadCallback = function() 
+  				{
+    			if (--apisToLoad == 0) 
+    				{
+    					setTimeout(showhandle(10000), 1000);
+    				}
+  				};
+
+  				apisToLoad = 1; // must match number of calls to gapi.client.load()
+  				apiRoot = 'https://focal-acronym-94611.appspot.com/_ah/api';  //not loading locally at this moment, always loading from the server.
+        	
+        	
+        		//Parameters are APIName,APIVersion,CallBack function,API Root 
+                gapi.client.load('leagueadmin', 'v1', loadCallback(), apiRoot);
+                
+                document.getElementById('listLeagues').onclick = function() {
+                    showhandle();
+                  }
+        }
+     </script>
+     
+     <script src="https://apis.google.com/js/client.js?onload=init"></script>
+     
+     <script type="text/javascript">   
+     	//If the user is logged in successfuly, then the user is pass
+        function showhandle(tries) 
+        {
+        	//Get the user id out of the URL.
+			uid = getParameter("uid");
+			if (uid == "NODATANODATA")
+			{
+				document.getElementById('username').innerHTML = '<a href="login.html">Click to Login</a>';
+			}   
+			else
+			{
+				try
+           		{
+			
+					//Build the Request Object
+    	        	var requestData = {};
+        	    	requestData.uid = uid;   
+            
+            		gapi.client.leagueadmin.getUser().execute(function(resp)
+        			{		
+        				if (!resp.code) 
+	                	{
+    	    				resp.items = resp.items || [];
+	    	    					
+	        				for (var i=0;i<resp.items.length;i++)
+		        			{
+		        				result_handle = resp.items[i].handle;
+	    	    				result_id = resp.items[i].id;
+	        	           	}
+    	        	                                                  
+	                	    if (result_id != uid) //This would happen if an error code was returned or no value was found.
+	        				{
+		                       	document.getElementById('username').innerHTML = '<a href="login.html">Click to Login</a>';
+		        			}
+	    	                else
+	        	            {
+	            	        	document.getElementById('username').innerHTML = "Logged In As: " + result_handle;
+	                	    }
+	                	}
+    	    			else
+        				{
+        					document.getElementById('username').innerHTML = '<a href="login.html">Click to Login</a>';
+        				}
+        			});
+           		}
+          		catch(err)
+          		{
+					result = "" + document.getElementById('username').textContent;
+        	  		if (result == "loading...")
+        	  		{
+        				result = "Wasn't Ready"   
+        	  		}
+        	  		if ((tries % 1000) == 0)
+        	  		{
+        	  			document.getElementById('username').innerHTML = result + "!"
+        	  		}
+        	  		
+        	  		if (tries-- > 0)
+        	  		{
+        	  			showhandle(tries);
+        	  		}
+          		}
+        	}
+        }
+     	
+     	
+        //This function can be used to get data from the URL.  If the data is not found then "NODATANODATA" is returned.
+        function getParameter(theParameter)
+        { 
+        	var params = window.location.search.substr(1).split('&');
+        	 
+        	for (var i = 0; i < params.length; i++) 
+        	{
+        		var p=params[i].split('=');
+        		if (p[0] == theParameter)
+        		{
+        		  return decodeURIComponent(p[1]);
+        		}
+        	}
+        	  
+        	return "NODATANODATA";
+        }
+    </script>
+    
+    
+</body>
+</html>

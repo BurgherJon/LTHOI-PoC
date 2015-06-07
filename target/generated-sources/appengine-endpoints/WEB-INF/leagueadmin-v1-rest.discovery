@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/UHUWnS3C9EujrcFX0HJrw3unww8\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/8YU7gQugUTu5k6NlPltuJ_UFhXE\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -91,6 +91,34 @@
      }
     }
    }
+  },
+  "User": {
+   "id": "User",
+   "type": "object",
+   "properties": {
+    "handle": {
+     "type": "string"
+    },
+    "id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "name": {
+     "type": "string"
+    }
+   }
+  },
+  "UserCollection": {
+   "id": "UserCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "User"
+     }
+    }
+   }
   }
  },
  "methods": {
@@ -122,23 +150,39 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "getLeague": {
-   "id": "leagueadmin.getLeague",
-   "path": "league/{id}",
-   "httpMethod": "GET",
+  "authenticate": {
+   "id": "leagueadmin.authenticate",
+   "path": "authenticate/{fname}/{pass}",
+   "httpMethod": "POST",
    "parameters": {
-    "id": {
-     "type": "integer",
+    "fname": {
+     "type": "string",
      "required": true,
-     "format": "int32",
+     "location": "path"
+    },
+    "pass": {
+     "type": "string",
+     "required": true,
      "location": "path"
     }
    },
    "parameterOrder": [
-    "id"
+    "fname",
+    "pass"
    ],
    "response": {
-    "$ref": "League"
+    "$ref": "UserCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getUser": {
+   "id": "leagueadmin.getUser",
+   "path": "usercollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "UserCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
