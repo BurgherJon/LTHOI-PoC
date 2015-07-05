@@ -25,55 +25,21 @@
     "maxAge" : 0
   },
   "methods" : {
-    "leagueadmin.authenticate" : {
-      "path" : "authenticate/{fname}/{pass}",
-      "httpMethod" : "POST",
+    "leagueadmin.getUser" : {
+      "path" : "footballusercollection/{email}",
+      "httpMethod" : "GET",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.authenticate",
+      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.getUser",
       "request" : {
         "parameters" : {
-          "fname" : {
-            "type" : "string",
-            "required" : true
-          },
-          "pass" : {
+          "email" : {
             "type" : "string",
             "required" : true
           }
         },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "leagueadmin.getUser" : {
-      "path" : "usercollection",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.getUser",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "leagueadmin.list" : {
-      "path" : "leaguecollection",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.getLeagues",
-      "request" : {
         "body" : "empty"
       },
       "response" : {
@@ -104,12 +70,27 @@
       "response" : {
         "body" : "autoTemplate(backendResponse)"
       }
+    },
+    "leagueadmin.list" : {
+      "path" : "leaguecollection",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.getLeagues",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
     }
   },
   "descriptor" : {
     "schemas" : {
-      "User" : {
-        "id" : "User",
+      "FootballUser" : {
+        "id" : "FootballUser",
         "type" : "object",
         "properties" : {
           "id" : {
@@ -123,14 +104,14 @@
           }
         }
       },
-      "UserCollection" : {
-        "id" : "UserCollection",
+      "FootballUserCollection" : {
+        "id" : "FootballUserCollection",
         "type" : "object",
         "properties" : {
           "items" : {
             "type" : "array",
             "items" : {
-              "$ref" : "User"
+              "$ref" : "FootballUser"
             }
           }
         }
@@ -158,24 +139,19 @@
       }
     },
     "methods" : {
-      "com.football.YourFirstAPI.authenticate" : {
-        "response" : {
-          "$ref" : "UserCollection"
-        }
-      },
       "com.football.YourFirstAPI.getUser" : {
         "response" : {
-          "$ref" : "UserCollection"
-        }
-      },
-      "com.football.YourFirstAPI.getLeagues" : {
-        "response" : {
-          "$ref" : "LeagueCollection"
+          "$ref" : "FootballUserCollection"
         }
       },
       "com.football.YourFirstAPI.addLeague" : {
         "response" : {
           "$ref" : "League"
+        }
+      },
+      "com.football.YourFirstAPI.getLeagues" : {
+        "response" : {
+          "$ref" : "LeagueCollection"
         }
       }
     }

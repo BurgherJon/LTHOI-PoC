@@ -1,4 +1,4 @@
 com\football\League.class
 com\football\YourFirstAPI.class
 com\football\Constants.class
-com\football\User.class
+com\football\FootballUser.class

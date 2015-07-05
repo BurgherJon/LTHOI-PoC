@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/8YU7gQugUTu5k6NlPltuJ_UFhXE\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/0SXhRRTIRxvuOj-nr0SOKh_eFXg\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -71,6 +71,33 @@
   }
  },
  "schemas": {
+  "FootballUser": {
+   "id": "FootballUser",
+   "type": "object",
+   "properties": {
+    "email": {
+     "type": "string"
+    },
+    "handle": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    }
+   }
+  },
+  "FootballUserCollection": {
+   "id": "FootballUserCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "FootballUser"
+     }
+    }
+   }
+  },
   "League": {
    "id": "League",
    "type": "object",
@@ -88,34 +115,6 @@
      "type": "array",
      "items": {
       "$ref": "League"
-     }
-    }
-   }
-  },
-  "User": {
-   "id": "User",
-   "type": "object",
-   "properties": {
-    "handle": {
-     "type": "string"
-    },
-    "id": {
-     "type": "integer",
-     "format": "int32"
-    },
-    "name": {
-     "type": "string"
-    }
-   }
-  },
-  "UserCollection": {
-   "id": "UserCollection",
-   "type": "object",
-   "properties": {
-    "items": {
-     "type": "array",
-     "items": {
-      "$ref": "User"
      }
     }
    }
@@ -150,39 +149,22 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "authenticate": {
-   "id": "leagueadmin.authenticate",
-   "path": "authenticate/{fname}/{pass}",
-   "httpMethod": "POST",
+  "getUser": {
+   "id": "leagueadmin.getUser",
+   "path": "footballusercollection/{email}",
+   "httpMethod": "GET",
    "parameters": {
-    "fname": {
-     "type": "string",
-     "required": true,
-     "location": "path"
-    },
-    "pass": {
+    "email": {
      "type": "string",
      "required": true,
      "location": "path"
     }
    },
    "parameterOrder": [
-    "fname",
-    "pass"
+    "email"
    ],
    "response": {
-    "$ref": "UserCollection"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
-  "getUser": {
-   "id": "leagueadmin.getUser",
-   "path": "usercollection",
-   "httpMethod": "GET",
-   "response": {
-    "$ref": "UserCollection"
+    "$ref": "FootballUserCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

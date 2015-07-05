@@ -12,167 +12,119 @@
     		<td style="width:80%" align="center">
        			Welcome to the Football Gambling App That Doesn't Have a House!
        		</td>
-       		<td style="width:20%">
-       			<div id="username"></div>
-       		</td>
+       		<td style="width:20%"><div id="greeting">
+       			<form action="javascript:void(0);">
+         			<div><input id="loginButton" type="submit" value="Login"></div>
+   				</form>
+   				<div id="greetingtext"></div>
+       		</div></td>
     	</tr>
     	<tr>
     		<td><div id="content">    			
-    			<form action="javascript:void(0);">
-         			<div>Your Name: <input id="fname" placeholder="Your First Name"></input></div>
-         			<div>Your Password: <input id="pw" placeholder="Your password"></input></div>
-         			<div><input id="login" type="submit" value="login"></div>
-   				</form>
-   				<div id="result"></div>
+    			<div id="result"></div>
    				<div id="debug"></div>	
     		</div></td>
     		<td>Right Side Bar</td>
     	</tr>
     </table>
     
-    
-    
-    
-    
     <script type="text/javascript">
-        function init() 
+       	var scopes = 'https://www.googleapis.com/auth/userinfo.email';
+    	var client_id = '212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com';
+
+    	function signin(mode, callback) 
+    	{
+    	  	gapi.auth.authorize({client_id: client_id,scope: scopes, immediate: mode},callback);
+    	}
+    
+    
+    	function init() 
         {
                 //Parameters are APIName,APIVersion,CallBack function,API Root 
                 gapi.client.load('leagueadmin', 'v1', null, 'https://focal-acronym-94611.appspot.com/_ah/api');
                 
                 
+                var apisToLoad;
+            	var callback = function() 
+            	{
+            	   if (--apisToLoad == 0) 
+            	   {
+            	     signin(true, showhandle);
+            	   }
+            	}
+            	  
+            	apisToLoad = 2;
+            	//Parameters are APIName,APIVersion,CallBack function,API Root 
+            	gapi.client.load('leagueadmin', 'v1', callback, 'https://focal-acronym-94611.appspot.com/_ah/api');
+            	gapi.client.load('oauth2','v2',callback);
                 
-                document.getElementById('login').onclick = function() 
+                
+                document.getElementById('loginButton').onclick = function() 
                 {
-                    login();
+                	signin(false,showhandle);
                 }
         }
         
-        //If the user is logged in successfuly, then the user is pass
-        function login() 
-        {
-        	debug = "";
-        	
-        	        	
-//debt     	//Get the entries  ---- I really should validate these, but I'm not going to right now.
-            var _Name = document.getElementById('fname').value;
-            var _pw = document.getElementById('pw').value;
- 
- 			/* For Debuging 
- 			debug = "_Name " + _Name;
-            debug = debug + "<br>_pw " + _pw; */
-            
-            //Build the Request Object
-            var requestData = {};
-            requestData.fname = _Name;
-            requestData.pass = _pw;    
-        	
-        	gapi.client.leagueadmin.authenticate(requestData).execute(function(resp)
-                {
-        				try
-        				{
-        					if (!resp.code) 
-                			{
-        							document.getElementById('result').innerHTML = "No Code";
-	        						resp.items = resp.items || [];
-	        						
-	        						for (var i=0;i<resp.items.length;i++) 
-	        						{
-	       								result_id = resp.items[i].id;
-            	                        if (result_id<1) //If there was an error, pick up the code out of fnmae.
-                	                    {
-                    	                   	result_fname = resp.items[i].fname;
-                    	                }
-	                                }
-	        						
-	        						if (result_id<1) //This indicates an errorcode was resturned
-    	                            {
-	        							if (result_id==-1)
-            	                    	{
-                	                		document.getElementById('result').innerHTML = "Invalid password, please try again!";
-                    	            	}
-                        	        	else if (result_id==-2)
-                            	    	{
-                                			document.getElementById('result').innerHTML = "User not Found!";
-                                		}
-	                                	else if (result_id==-3)
-    	                            	{
-        	                        		document.getElementById('result').innerHTML = "Duplicate User!";
-            	                    	}
-                	                	else if (result_id<0)
-                    	            	{
-                        	        		document.getElementById('result').innerHTML = "System Error Code: " + result_id + "<br>System Error Message: " + result_fname;
-                            	    	}
-                                	}
-	                                else //Load their handle and start showing the content.
-    	                            {
-        	                        	showhandle(result_id);
-        	                        	homecontent(result_id);
-            	                    }
-	                        }
-    	            		else
-        	        		{
-            	    			document.getElementById('result').innerHTML = "resp.code";
-                			}
-        				}
-        				catch(err)
-        				{
-        					document.getElementById('result').innerHTML = "Did you enter a username and password?";
-        				}
-        				
-        				document.getElementById('debug').innerHTML = debug;
-                
-        		});
-        	}
         
-      	//If the user is logged in successfuly, then the user is pass
-        function showhandle(uid) 
+        
+    	//This function is called automatically when initializing the page or if the user pushes the login button.
+    	//If the user is successfuly logged in than this function will use their email to fetch their handle and display it in the window.
+      	//If the user is not logged in it will instead display the login button.
+      	//If the user is logged in, but does not have an entry in the table it will show an error.
+      	function showhandle() 
         {
-        	try
+      		var addy = "";
+    		
+    		//If the user is logged in take away the login button and add the user's handle in the welcome area.
+    		var request = gapi.client.oauth2.userinfo.get().execute(function(resp)
+      		{
+      		   	if (!resp.code)
+      		   	{
+      		   		// User is signed in, so hide the button
+      		   		document.getElementById('loginButton').style.visibility = 'hidden';
+      		   		getHandleFromAPI(resp.email)  		
+      		   	}
+      		   	else 
+      		   	{
+      		   		document.getElementById('loginButton').style.visibility = '';
+      		   	}
+      		});
+
+        }
+    	
+    	
+    	function getHandleFromAPI(addy)
+    	{
+    		try
            	{
-			
-				//Build the Request Object
-    	       	var requestData = {};
-        	   	requestData.uid = uid;   
-            
-            	gapi.client.leagueadmin.getUser().execute(function(resp)
+    			//Build the Request Object
+                var requestData = {};
+                requestData.email = addy;
+                gapi.client.leagueadmin.getUser(requestData).execute(function(resp)  
         		{		
         			if (!resp.code) 
 	               	{
     	    			resp.items = resp.items || [];
-	    	   					
-	        			for (var i=0;i<resp.items.length;i++)
+	    	   			
+    	    			for (var i=0;i<resp.items.length;i++)
 		       			{
 		       				result_handle = resp.items[i].handle;
-	    	   				result_id = resp.items[i].id;
+		       				
 	                   	}
-    	        	                                                  
-	               	    if (result_id != uid) //This would happen if an error code was returned or no value was found.
-	        			{
-		                   	document.getElementById('username').innerHTML = '<a href="login.html">Click to Login</a>';
-		       			}
-	    	            else
-	                    {
-	           	        	document.getElementById('username').innerHTML = "Logged In As: " + result_handle;
-	               	    }
+    	        	    
+    	    			document.getElementById('greetingtext').innerText = 'Logged In As: ' + result_handle;
 	               	}
     	    		else
         			{
-        				document.getElementById('username').innerHTML = '<a href="login.html">Click to Login</a>';
+    	    			document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
         			}
         		});
            	}
           	catch(err)
           	{
-          		document.getElementById('username').innerHTML = "Error Loading User"
+          		return "Error: Error with Result Set.";
           	}
-        }
-      	
-      	function homecontent(uid)
-      	{
-      		document.getElementById('content').innerHTML = "Soon I'll have content to show for uid " + uid + ".";
-      	}
-
+    	}
         
     </script>
     <script src="https://apis.google.com/js/client.js?onload=init"></script>
