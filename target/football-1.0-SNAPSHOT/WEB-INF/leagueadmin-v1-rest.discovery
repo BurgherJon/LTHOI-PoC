@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/0SXhRRTIRxvuOj-nr0SOKh_eFXg\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/LADRXQPalLYVSkjQ7Rm8prIolmk\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -71,6 +71,40 @@
   }
  },
  "schemas": {
+  "Bet": {
+   "id": "Bet",
+   "type": "object",
+   "properties": {
+    "odds": {
+     "type": "string",
+     "format": "int64"
+    },
+    "oppTeam": {
+     "type": "string"
+    },
+    "pickTeam": {
+     "type": "string"
+    },
+    "result": {
+     "type": "string"
+    },
+    "week": {
+     "type": "string"
+    }
+   }
+  },
+  "BetCollection": {
+   "id": "BetCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Bet"
+     }
+    }
+   }
+  },
   "FootballUser": {
    "id": "FootballUser",
    "type": "object",
@@ -98,6 +132,40 @@
     }
    }
   },
+  "Game": {
+   "id": "Game",
+   "type": "object",
+   "properties": {
+    "awayTeam": {
+     "type": "string"
+    },
+    "homeTeam": {
+     "type": "string"
+    },
+    "odds": {
+     "type": "string",
+     "format": "int64"
+    },
+    "result": {
+     "type": "string"
+    },
+    "week": {
+     "type": "string"
+    }
+   }
+  },
+  "GameCollection": {
+   "id": "GameCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Game"
+     }
+    }
+   }
+  },
   "League": {
    "id": "League",
    "type": "object",
@@ -115,6 +183,39 @@
      "type": "array",
      "items": {
       "$ref": "League"
+     }
+    }
+   }
+  },
+  "User": {
+   "id": "User",
+   "type": "object",
+   "properties": {
+    "authDomain": {
+     "type": "string"
+    },
+    "email": {
+     "type": "string"
+    },
+    "federatedIdentity": {
+     "type": "string"
+    },
+    "nickname": {
+     "type": "string"
+    },
+    "userId": {
+     "type": "string"
+    }
+   }
+  },
+  "UserCollection": {
+   "id": "UserCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "User"
      }
     }
    }
@@ -149,20 +250,43 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getCSHistory": {
+   "id": "leagueadmin.getCSHistory",
+   "path": "betcollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "BetCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getNewMethodTest": {
+   "id": "leagueadmin.getNewMethodTest",
+   "path": "usercollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "UserCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getThisWeeksGames": {
+   "id": "leagueadmin.getThisWeeksGames",
+   "path": "gamecollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "GameCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getUser": {
    "id": "leagueadmin.getUser",
-   "path": "footballusercollection/{email}",
+   "path": "footballusercollection",
    "httpMethod": "GET",
-   "parameters": {
-    "email": {
-     "type": "string",
-     "required": true,
-     "location": "path"
-    }
-   },
-   "parameterOrder": [
-    "email"
-   ],
    "response": {
     "$ref": "FootballUserCollection"
    },
@@ -176,6 +300,27 @@
    "httpMethod": "GET",
    "response": {
     "$ref": "LeagueCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "makebet": {
+   "id": "leagueadmin.makebet",
+   "path": "makebet/{team}",
+   "httpMethod": "POST",
+   "parameters": {
+    "team": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "team"
+   ],
+   "response": {
+    "$ref": "BetCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
