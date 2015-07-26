@@ -8,6 +8,7 @@ public class FootballUser
 	String fname;
 	String handle;
 	String email;
+	int betting_closed;
 
 	public FootballUser()
 	{
@@ -24,6 +25,18 @@ public class FootballUser
 		this.handle = handlein;
 		this.email = emailin;
 	}
+	
+	public FootballUser(String fnamein, String handlein, String emailin, int betting_closedin)
+	{
+		super();
+		
+		System.out.println("test the log");
+				
+		this.fname = fnamein;
+		this.handle = handlein;
+		this.email = emailin;
+		this.betting_closed = betting_closedin;
+	}
 
 	public String getHandle()
 	{
@@ -38,5 +51,10 @@ public class FootballUser
 	public String getEmail()
 	{
 		return this.email;
+	}
+	
+	public int getBetting_closed()
+	{
+		return this.betting_closed;
 	}
 }

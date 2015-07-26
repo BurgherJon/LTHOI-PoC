@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/LADRXQPalLYVSkjQ7Rm8prIolmk\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/3bNkApZ42Q-W-Nv0hR2EKyJXcb4\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -75,6 +75,13 @@
    "id": "Bet",
    "type": "object",
    "properties": {
+    "againstyou": {
+     "type": "string"
+    },
+    "netbet": {
+     "type": "string",
+     "format": "int64"
+    },
     "odds": {
      "type": "string",
      "format": "int64"
@@ -109,6 +116,10 @@
    "id": "FootballUser",
    "type": "object",
    "properties": {
+    "betting_closed": {
+     "type": "integer",
+     "format": "int32"
+    },
     "email": {
      "type": "string"
     },
@@ -250,17 +261,6 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "getCSHistory": {
-   "id": "leagueadmin.getCSHistory",
-   "path": "betcollection",
-   "httpMethod": "GET",
-   "response": {
-    "$ref": "BetCollection"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
   "getNewMethodTest": {
    "id": "leagueadmin.getNewMethodTest",
    "path": "usercollection",
@@ -294,6 +294,33 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getUserBets": {
+   "id": "leagueadmin.getUserBets",
+   "path": "betcollection/{this_week}/{no_house}",
+   "httpMethod": "GET",
+   "parameters": {
+    "no_house": {
+     "type": "boolean",
+     "required": true,
+     "location": "path"
+    },
+    "this_week": {
+     "type": "boolean",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "this_week",
+    "no_house"
+   ],
+   "response": {
+    "$ref": "BetCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "list": {
    "id": "leagueadmin.list",
    "path": "leaguecollection",
@@ -321,6 +348,27 @@
    ],
    "response": {
     "$ref": "BetCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "preGameProcess": {
+   "id": "leagueadmin.preGameProcess",
+   "path": "preGameProcess/{pass}",
+   "httpMethod": "POST",
+   "parameters": {
+    "pass": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "pass"
+   ],
+   "response": {
+    "$ref": "League"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
