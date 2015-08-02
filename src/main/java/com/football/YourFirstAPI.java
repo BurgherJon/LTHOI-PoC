@@ -475,7 +475,7 @@ public class YourFirstAPI
 	//If the "no_house" parameter is set to 1, then only bets that the user has made and not bets that they were forced to make will be returned.
 		//The players bets will always come first and then the house bets.
 	@ApiMethod(name="getUserBets", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID})
-	public List<Bet> getUserBets (@Named("this_week") Boolean this_week, @Named("no_house") Boolean no_house, User guser) throws UnauthorizedException
+	public List<Bet> getUserBets (@Named("this_week") boolean this_week, @Named("no_house") boolean no_house, User guser) throws UnauthorizedException
 	{
 		List<Bet> bets = new ArrayList<Bet>();
 		Bet bet = new Bet();
@@ -516,48 +516,40 @@ public class YourFirstAPI
 			int res = 0;
 			
 			//The first two queries load the user's non-house bets the first one does it for just this week (if that's specified) the second one does it for all bets if that's specified.
-			if (this_week)
+			if (this_week == true)
 			{
-				//The first query will load all of your current bets in exactly the same way they are loaded in CSHistory.
-				strquery = "Select Weeks.name_long AS game_week, Bets.result AS result, Bets.home AS picked_home, t1.team AS home_team, t2.team AS away_team, Games.home_line AS home_line FROM bedb1.Bets As Bets LEFT JOIN bedb1.Games As Games ON Bets.game_id = Games.id LEFT JOIN bedb1.Teams AS t1 ON Games.home = t1.id LEFT JOIN bedb1.Teams AS t2 ON Games.away = t2.id LEFT JOIN bedb1.Weeks AS Weeks ON Games.week_id = Weeks.id Inner JOIN bedb1.SysInfo As s ON s.current_week = Games.week_id WHERE Bets.email = '" + guser.getEmail() + "';";
-				rs = conn.createStatement().executeQuery(strquery);
-				while (rs.next())
-				{
-					//Result will always be udefined in this case because we are looking only at the current week's games so there aren't results.
-					bet = new Bet(rs.getString("game_week"),-1132,rs.getInt("picked_home"),rs.getString("home_team"),rs.getString("away_team"),rs.getLong("home_line"));
-					bets.add(bet);
-					betcount++;
-				}
+				strquery = "SELECT ls.bet_size AS bet_size, w.name_long AS game_week, b.home AS picked_home, g.home_result AS home_result, th.team AS home_team, ta.team AS away_team, g.home_line AS home_line FROM bedb1.Bets b INNER JOIN bedb1.Games g ON b.game_id = g.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Teams th ON g.home = th.id INNER JOIN bedb1.Teams ta ON g.away = ta.id INNER JOIN bedb1.League_Seasons ls ON b.league_season_id = ls.id INNER JOIN bedb1.SysInfo si ON si.current_week = w.id WHERE ls.id = 1 AND b.email = '" + guser.getEmail() + "' ORDER BY w.id;";
 			}
-			else
+			else if (this_week == false)
 			{
-				strquery = "Select Weeks.name_long AS game_week, Bets.result AS result, Bets.home AS picked_home, t1.team AS home_team, t2.team AS away_team, Games.home_line AS home_line FROM bedb1.Bets As Bets LEFT JOIN bedb1.Games As Games ON Bets.game_id = Games.id LEFT JOIN bedb1.Teams AS t1 ON Games.home = t1.id LEFT JOIN bedb1.Teams AS t2 ON Games.away = t2.id LEFT JOIN bedb1.Weeks AS Weeks ON Games.week_id = Weeks.id WHERE Bets.email = '" + guser.getEmail() + "';";
-				rs = conn.createStatement().executeQuery(strquery);
-				while (rs.next())
-				{
-					//Since Java autocorrects a null result (i.e. the game hasn't been played yet) to a 0 it can't be distinguished from a push.  This code sets it to the value that the constructor expects for games that haven't been played (-1132).
-					res = rs.getInt("result");
-					if (rs.wasNull())
-					{
-						res = -1132;
-					}
-					
-					bet = new Bet(rs.getString("game_week"),res,rs.getInt("picked_home"),rs.getString("home_team"),rs.getString("away_team"),rs.getLong("home_line"));
-					bets.add(bet);
-					betcount++;
-				}
+				strquery = "SELECT ls.bet_size AS bet_size, w.name_long AS game_week, b.home AS picked_home, g.home_result AS home_result, th.team AS home_team, ta.team AS away_team, g.home_line AS home_line FROM bedb1.Bets b INNER JOIN bedb1.Games g ON b.game_id = g.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Teams th ON g.home = th.id INNER JOIN bedb1.Teams ta ON g.away = ta.id INNER JOIN bedb1.League_Seasons ls ON b.league_season_id = ls.id WHERE ls.id = 1 AND b.email = '" + guser.getEmail() + "' ORDER BY w.id;";	
 			}
 			
+			
+			rs = conn.createStatement().executeQuery(strquery);
+			while (rs.next())
+			{
+				//Since Java autocorrects a null result (i.e. the game hasn't been played yet) to a 0 it can't be distinguished from a push.  This code sets it to the value that the constructor expects for games that haven't been played (-1132).
+				res = rs.getInt("home_result");
+				if (rs.wasNull())
+				{
+					res = -1132;
+				}
+		
+				bet = new Bet(rs.getString("game_week"),res,rs.getInt("picked_home"),rs.getString("home_team"),rs.getString("away_team"),rs.getLong("home_line"), rs.getInt("bet_size"));
+				bets.add(bet);
+				betcount++;
+			}
 						
 			//The second two queries will load all of the house bets.  Again this will either be for just the week or for the whole season.
-			if (!no_house)
+			if (no_house == false)
 			{
-				if (this_week)
+				if (this_week == true)
 				{
 					//The query if it's just this week.
 					strquery = "Select h.other_bettees AS bettees, ls.bet_size AS bet_size, w.name_long AS game_week, b.result AS result, b.home AS picked_home, ht.team AS home_team, at.team AS away_team, g.home_line AS home_line, u.handle AS otherside From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.SysInfo s ON s.current_week = g.week_id INNER JOIN bedb1.Teams ht ON g.home = ht.id INNER JOIN bedb1.Teams at ON g.away = at.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Users u ON u.email = b.email INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "' ORDER BY g.id;";
 				}
-				else
+				else if (this_week == false)
 				{
 					//The query if it's all weeks.
 					strquery = "Select h.other_bettees AS bettees, ls.bet_size AS bet_size, w.name_long AS game_week, b.result AS result, b.home AS picked_home, ht.team AS home_team, at.team AS away_team, g.home_line AS home_line, u.handle AS otherside From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.Teams ht ON g.home = ht.id INNER JOIN bedb1.Teams at ON g.away = at.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Users u ON u.email = b.email INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "' ORDER BY g.id;";

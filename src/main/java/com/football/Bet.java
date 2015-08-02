@@ -71,7 +71,7 @@ public class Bet
 	
 	//This constructor is designed to take the results of the query that loads regular bets and convert them in to the expected data.
 	//If a game has yet to be played (in the db the result is null), please pass -1132.
-	public Bet(String week, int result, int picked_home, String home_team, String away_team, long home_line)
+	public Bet(String week, int result, int picked_home, String home_team, String away_team, long home_line, int bet_size)
 	{
 		super();
 		
@@ -81,32 +81,59 @@ public class Bet
 			this.pickteam = home_team;
 			this.oppteam = away_team;
 			this.odds = home_line;
+			
+			if (result < home_line)
+			{
+				this.result = "Win";
+			}
+			else if (result == -1132)
+			{
+				this.result = "Good Luck!";
+			}
+			else if (result == home_line)
+			{
+				this.result = "Push";
+			}
+			else if (result > home_line)
+			{
+				this.result = "Loss";
+			}
+			else
+			{
+				this.result = "No Result" + result;
+			}
 		}
 		else
 		{
 			this.pickteam = away_team;
 			this.oppteam = home_team;
 			this.odds = -1 * home_line;
-		}
-		if (result == 1)
-		{
-			this.result = "Win";
-		}
-		else if (result == -1132)
-		{
-			this.result = "Good Luck!";
-		}
-		else if (result == 0)
-		{
-			this.result = "Push";
-		}
-		else if (result == -1)
-		{
-			this.result = "Loss";
+			
+			if (result < home_line)
+			{
+				this.result = "Win";
+			}
+			else if (result == -1132)
+			{
+				this.result = "Good Luck!";
+			}
+			else if (result == home_line)
+			{
+				this.result = "Push";
+			}
+			else if (result > home_line)
+			{
+				this.result = "Loss";
+			}
+			else
+			{
+				this.result = "No Result" + result;
+			}
 		}
 		
-		this.againstyou = "";
-		this.netbet = 0;
+		
+		this.againstyou = "Your Bet!";
+		this.netbet = bet_size;
 	}
 	
 	//This constructor is designed to take the results of the query that loads house bets and convert them in to the expected data.
@@ -120,28 +147,44 @@ public class Bet
 			this.pickteam = home_team;
 			this.oppteam = away_team;
 			this.odds = home_line;
+			if (result == 1)
+			{
+				this.result = "Win";
+			}
+			else if (result == -1)
+			{
+				this.result = "Loss";
+			}
+			else if (result == -1132)
+			{
+				this.result = "Good Luck!";
+			}
+			else
+			{
+				this.result = "Push";
+			}
 		}
 		else
 		{
 			this.pickteam = away_team;
 			this.oppteam = home_team;
 			this.odds = -1 * home_line;
-		}
-		if (result == 1)
-		{
-			this.result = "Win";
-		}
-		else if (result == -1132)
-		{
-			this.result = "Good Luck!";
-		}
-		else if (result == 0)
-		{
-			this.result = "Push";
-		}
-		else if (result == -1)
-		{
-			this.result = "Loss";
+			if (result == -1)
+			{
+				this.result = "Win";
+			}
+			else if (result == 1)
+			{
+				this.result = "Loss";
+			}
+			else if (result == -1132)
+			{
+				this.result = "Good Luck!";
+			}
+			else
+			{
+				this.result = "Push";
+			}
 		}
 			
 		this.week = week;
