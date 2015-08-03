@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 
 
+
 //DB Enabling Libraries
 import java.io.*;
 import java.sql.*;
@@ -145,7 +146,7 @@ public class YourFirstAPI
 			
 		} 
 		catch (ClassNotFoundException e) {
-			game = new Game("Error",e.getMessage(),"",0,"");
+			game = new Game(0, "Error",e.getMessage(),"",0,"");
 			games.add(game);
 			return games;
 		}
@@ -160,7 +161,7 @@ public class YourFirstAPI
 			int gamecount = 0;
 			while (rs.next())
 			{
-				game = new Game(rs.getString("theweek"),rs.getString("hometeam"),rs.getString("awayteam"),rs.getLong("line"),"");
+				game = new Game(0, rs.getString("theweek"),rs.getString("hometeam"),rs.getString("awayteam"),rs.getLong("line"),"");
 				
 				games.add(game);
 				
@@ -169,7 +170,7 @@ public class YourFirstAPI
 			
 			if (gamecount == 0)
 			{
-				game = new Game("No Games","No Games","",0,"");
+				game = new Game(0, "No Games","No Games","",0,"");
 				games.add(game);
 			}
 			
@@ -177,7 +178,7 @@ public class YourFirstAPI
 		} 
 		catch (SQLException e) 
 		{
-			game = new Game("SQL Exception:", e.getMessage(),"",0,"");
+			game = new Game(0, "SQL Exception:", e.getMessage(),"",0,"");
 			games.add(game);
 			return games;
 		}
@@ -662,10 +663,214 @@ public class YourFirstAPI
 	}
 	
 	//Admin Screen Method to Receive a Game Result.  Should take the team and the win by.
+	@ApiMethod(name="setGameResult", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID})
+	public League setGameResult (@Named("week") String week, @Named("home_team") String home_team, @Named("result") int result, User guser) throws UnauthorizedException
+	{
+		League status = new League (1, "Everything Seems to Have Worked!");
 		
-	//Admin Screen Method to Enter a New Game 
+		String strquery=null;
+		String strurl=null;
+					
+		try 
+		{
+				
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) 
+			{
+			    // Load the class that provides the new "jdbc:google:mysql://" prefix.
+			    Class.forName("com.mysql.jdbc.GoogleDriver");
+			    strurl = "jdbc:google:mysql://focal-acronym-94611:bedb?user=root";
+			} 
+			else {
+			    // Local MySQL instance to use during development.
+			    Class.forName("com.mysql.jdbc.Driver");
+			    strurl = "jdbc:mysql://127.0.0.1:3306/bedb?user=root";
+			}
+				
+				
+		} 
+		catch (ClassNotFoundException e) {
+			status = new League (-1, "Error forming query.");
+			return status;
+		}
+			
+		Connection conn = null;
+		try 
+		{
+			conn = DriverManager.getConnection(strurl);
+			ResultSet rs;
+			int game_id;
+			
+			//This checks to be sure that the requesting user is an administrator (if they are not, the method should fail).
+			strquery = "SELECT isAdmin FROM bedb1.Users WHERE email = '" + guser.getEmail() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				if (!rs.getBoolean("isAdmin"))
+				{
+					status = new League (-1, "Logged in user is not an administrator.");
+					return status;
+				}
+			}
+			else
+			{
+				status = new League (-1, "Cannot find users email address.");
+				return status;
+			}
+			
+			
+			
+			//Look up the game_id (and if it's not there throw an exception).
+			strquery = "SELECT g.id AS game_id FROM bedb1.Games g INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Teams t ON t.id = g.home WHERE w.name_long = '" + week + "' AND t.team = '" + home_team + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				game_id = rs.getInt("game_id");
+				
+				if(!rs.isLast())
+				{
+					status = new League (0, "More than one game found where the " + home_team + " was home in week " + week);
+				}
+			}
+			else
+			{
+				status = new League (-1, "Could not find a game wher the " + home_team + " was home in week " + week);
+				return status;
+			}
+			
+			
+			
+			//Set the result as has been specified.
+			strquery = "UPDATE bedb1.Games SET home_result = " + result + " WHERE id = " + game_id +";";
+			conn.createStatement().executeUpdate(strquery);
+					
+			conn.close();
+		} 
+		catch (SQLException e) 
+		{
+			status = new League (-1, "SQL Error" + e.getMessage());
+			return status;
+		}
 		
-	//Admin Screen Method to change the current week to the next week (set the preGameProcess flag to zero).
+		return status;
+	}
+	
+	//If succcessful, it will return the game with the id 1.  If unsuccessful it will return a -1 for the id and an error message for the week.
+	@ApiMethod(name="addGame", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID})
+	public Game addGame (@Named("home_team") String home_team, @Named("away_team") String away_team, @Named("home_line") double home_line, User guser) throws UnauthorizedException
+	{
+		Game theGame = new Game(0, "", home_team, away_team, home_line, "");
+		
+		String strquery=null;
+		String strurl=null;
+					
+		try 
+		{
+				
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) 
+			{
+			    // Load the class that provides the new "jdbc:google:mysql://" prefix.
+			    Class.forName("com.mysql.jdbc.GoogleDriver");
+			    strurl = "jdbc:google:mysql://focal-acronym-94611:bedb?user=root";
+			} 
+			else {
+			    // Local MySQL instance to use during development.
+			    Class.forName("com.mysql.jdbc.Driver");
+			    strurl = "jdbc:mysql://127.0.0.1:3306/bedb?user=root";
+			}
+				
+				
+		} 
+		catch (ClassNotFoundException e) {
+			return new Game(-1, "Error on Query Build:" + e.getMessage(), "", "", 0, "");
+		}
+			
+		Connection conn = null;
+		try 
+		{
+			conn = DriverManager.getConnection(strurl);
+			ResultSet rs;
+			int week_id;
+			int home_team_id;
+			int away_team_id;
+			
+			//This checks to be sure that the requesting user is an administrator (if they are not, the method should fail).
+			strquery = "SELECT isAdmin FROM bedb1.Users WHERE email = '" + guser.getEmail() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				if (!rs.getBoolean("isAdmin"))
+				{
+					return new Game(-1, "User not an administrator.", "", "", 0, "");
+				}
+			}
+			else
+			{
+				return new Game(-1, "No user with that email found", "", "", 0, "");
+			}
+			
+			
+			
+			//Look up the next week (at this point you can only add games for next week and the next week must be the next one in the system.
+			strquery = "SELECT MIN(w.id) AS next_week_id, w.name_long AS week_name FROM bedb1.Weeks w WHERE w.id > (SELECT current_week From bedb1.SysInfo);";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				week_id = rs.getInt("next_week_id");
+				theGame.setWeek(rs.getString("week_name"));
+				
+			}
+			else
+			{
+				return new Game(-1, "No next week found", "", "", 0, "");
+			}
+			
+			
+			
+			//Lookup the home team's id.
+			strquery = "SELECT t.id AS id FROM bedb1.Teams t WHERE team = '" + theGame.getHomeTeam() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				home_team_id = rs.getInt("id");
+			}
+			else
+			{
+				return new Game(-1, "The Home Team was not found!", "", "", 0, "");
+			}
+			
+			
+			
+			//Lookup the away team's id.
+			strquery = "SELECT t.id AS id FROM bedb1.Teams t WHERE team = '" + theGame.getAwayTeam() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				away_team_id = rs.getInt("id");
+			}
+			else
+			{
+				return new Game(-1, "The Away Team was not found!", "", "", 0, "");
+			}
+			
+			
+			
+			
+			strquery = "INSERT INTO bedb1.Games(week_id, home, away, home_line) VALUES (" + week_id + ", " + home_team_id + ", " + away_team_id + ", " + theGame.getOdds() + ");";
+			conn.createStatement().executeUpdate(strquery);
+			
+			theGame.setid(1);
+					
+			conn.close();
+		} 
+		catch (SQLException e) 
+		{
+			return new Game(-1, "SQL Exception: " + e.getMessage(), "", "", 0, "");
+		}
+		
+		return theGame;
+	}
+		
+	//Admin Screen Method to change the current week to the next week (set the preGameProcess flag to zero, calculate the result of all the bets that week).
 	
 	/*********************************************************************************************/
 	/***** These Are The Old League Admin API Methods That I Used to Test The Initial Setup ******/
@@ -703,52 +908,6 @@ public class YourFirstAPI
 		
 		
 		return leagues;
-	}
-
-	@ApiMethod(name="add")
-	public League addLeague(@Named("id") Integer id, @Named("name") String name)
-	{
-		String strquery=null;
-		String strurl=null;
-				
-		try 
-		{
-			
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) 
-			{
-			    // Load the class that provides the new "jdbc:google:mysql://" prefix.
-			    Class.forName("com.mysql.jdbc.GoogleDriver");
-			    strurl = "jdbc:google:mysql://focal-acronym-94611:bedb?user=root";
-			} 
-			else {
-			    // Local MySQL instance to use during development.
-			    Class.forName("com.mysql.jdbc.Driver");
-			    strurl = "jdbc:mysql://127.0.0.1:3306/bedb?user=root";
-			}
-			
-			
-		} 
-		catch (ClassNotFoundException e) {
-			System.out.println("Failed on setting Class - Remote Modification 2");
-			e.printStackTrace();
-		}
-		
-		
-		Connection conn = null;
-		try 
-		{
-			conn = DriverManager.getConnection(strurl);
-			strquery = "INSERT INTO bedb1.Leagues (id, name) VALUES("+id+", '"+name+"');";
-			conn.createStatement().executeUpdate(strquery);
-	        conn.close();
-			return new League(1000, "Success");
-		} 
-		catch (SQLException e) 
-		{
-			System.out.println("Failed to set values");
-			return new League(0, e.getMessage());
-		}
-		
 	}
 
 }

@@ -82,13 +82,13 @@ public class Bet
 			this.oppteam = away_team;
 			this.odds = home_line;
 			
-			if (result < home_line)
-			{
-				this.result = "Win";
-			}
-			else if (result == -1132)
+			if (result == -1132)
 			{
 				this.result = "Good Luck!";
+			}
+			else if (result < home_line)
+			{
+				this.result = "Win";
 			}
 			else if (result == home_line)
 			{
@@ -109,13 +109,13 @@ public class Bet
 			this.oppteam = home_team;
 			this.odds = -1 * home_line;
 			
-			if (result < home_line)
-			{
-				this.result = "Win";
-			}
-			else if (result == -1132)
+			if (result == -1132)
 			{
 				this.result = "Good Luck!";
+			}
+			else if (result < home_line)
+			{
+				this.result = "Win";
 			}
 			else if (result == home_line)
 			{

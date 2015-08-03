@@ -5,10 +5,11 @@ import java.util.List;
 
 public class Game
 {
+	int id;
 	String week;
 	String hometeam;
 	String awayteam;
-	long homeodds;
+	double homeodds;
 	String homeresult;
 	
 	public Game()
@@ -16,16 +17,32 @@ public class Game
 		//blank
 	}
 
-	public Game(String weekin, String hometeamin, String awayteamin, long homeoddsin, String resultin)
+	public Game(int idin, String weekin, String hometeamin, String awayteamin, double homeoddsin, String resultin)
 	{
 		super();
 		
+		this.id = idin;
 		this.week = weekin;
 		this.hometeam = hometeamin;
 		this.awayteam = awayteamin;
 		this.homeodds = homeoddsin;
 		this.homeresult = resultin;
 				
+	}
+	
+	public void setWeek(String weekin)
+	{
+		this.week = weekin;
+	}
+	
+	public void sethomeodds(double homeoddsin)
+	{
+		this.homeodds = homeoddsin;
+	}
+	
+	public void setid(int idin)
+	{
+		this.id = idin;
 	}
 	
 	public String getWeek()
@@ -43,7 +60,7 @@ public class Game
 		return this.awayteam;
 	}
 	
-	public long getOdds()
+	public double getOdds()
 	{
 		return this.homeodds;
 	}

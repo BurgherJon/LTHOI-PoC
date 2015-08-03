@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/3bNkApZ42Q-W-Nv0hR2EKyJXcb4\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/diF-YrkuK257QnpoQCN7hDDICyQ\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -153,9 +153,17 @@
     "homeTeam": {
      "type": "string"
     },
+    "homeodds": {
+     "type": "number",
+     "format": "double"
+    },
+    "id": {
+     "type": "integer",
+     "format": "int32"
+    },
     "odds": {
-     "type": "string",
-     "format": "int64"
+     "type": "number",
+     "format": "double"
     },
     "result": {
      "type": "string"
@@ -233,29 +241,35 @@
   }
  },
  "methods": {
-  "add": {
-   "id": "leagueadmin.add",
-   "path": "addLeague/{id}/{name}",
+  "addGame": {
+   "id": "leagueadmin.addGame",
+   "path": "addGame/{home_team}/{away_team}/{home_line}",
    "httpMethod": "POST",
    "parameters": {
-    "id": {
-     "type": "integer",
+    "away_team": {
+     "type": "string",
      "required": true,
-     "format": "int32",
      "location": "path"
     },
-    "name": {
+    "home_line": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "path"
+    },
+    "home_team": {
      "type": "string",
      "required": true,
      "location": "path"
     }
    },
    "parameterOrder": [
-    "id",
-    "name"
+    "home_team",
+    "away_team",
+    "home_line"
    ],
    "response": {
-    "$ref": "League"
+    "$ref": "Game"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -366,6 +380,40 @@
    },
    "parameterOrder": [
     "pass"
+   ],
+   "response": {
+    "$ref": "League"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "setGameResult": {
+   "id": "leagueadmin.setGameResult",
+   "path": "setGameResult/{week}/{home_team}/{result}",
+   "httpMethod": "POST",
+   "parameters": {
+    "home_team": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    },
+    "result": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "path"
+    },
+    "week": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "week",
+    "home_team",
+    "result"
    ],
    "response": {
     "$ref": "League"
