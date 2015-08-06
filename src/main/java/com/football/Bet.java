@@ -147,21 +147,26 @@ public class Bet
 			this.pickteam = home_team;
 			this.oppteam = away_team;
 			this.odds = home_line;
-			if (result == 1)
-			{
-				this.result = "Win";
-			}
-			else if (result == -1)
-			{
-				this.result = "Loss";
-			}
-			else if (result == -1132)
+
+			if (result == -1132)
 			{
 				this.result = "Good Luck!";
 			}
-			else
+			else if (result < home_line)
+			{
+				this.result = "Win";
+			}
+			else if (result == home_line)
 			{
 				this.result = "Push";
+			}
+			else if (result > home_line)
+			{
+				this.result = "Loss";
+			}
+			else
+			{
+				this.result = "No Result" + result;
 			}
 		}
 		else
@@ -169,21 +174,26 @@ public class Bet
 			this.pickteam = away_team;
 			this.oppteam = home_team;
 			this.odds = -1 * home_line;
-			if (result == -1)
-			{
-				this.result = "Win";
-			}
-			else if (result == 1)
-			{
-				this.result = "Loss";
-			}
-			else if (result == -1132)
+			
+			if (result == -1132)
 			{
 				this.result = "Good Luck!";
 			}
-			else
+			else if (result < home_line)
+			{
+				this.result = "Win";
+			}
+			else if (result == home_line)
 			{
 				this.result = "Push";
+			}
+			else if (result > home_line)
+			{
+				this.result = "Loss";
+			}
+			else
+			{
+				this.result = "No Result" + result;
 			}
 		}
 			
@@ -191,5 +201,6 @@ public class Bet
 		this.againstyou = against;
 		this.netbet = netbet;
 	}
+	
 
 }
