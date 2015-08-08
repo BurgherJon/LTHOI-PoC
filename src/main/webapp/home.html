@@ -228,7 +228,7 @@
     		//Set the staged bets to zero
     		StagedBet = 0;
 
-    		if (closed = 0)
+    		if (closed == 0)
     		{
     			gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)  
         		{		

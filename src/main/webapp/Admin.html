@@ -11,6 +11,8 @@
     	<tr>
     		<td style="width:80%" align="center">
        			Welcome to the Football Gambling App That Doesn't Have a House!
+       			<br>The Admin Section!!!
+       			
        		</td>
        		<td style="width:20%"><div id="greeting">
        			<form action="javascript:void(0);">
@@ -22,15 +24,12 @@
     	<tr>
     		<td><div id="content">    			
     			<div id="result"></div>
-    			<div id="button"><input id="thebutton" type="submit" value="This is the button that does all the things"></div>
    				<div id="debug"></div>	
     		</div></td>
     		<td>
     			<form action="javascript:void(0);">
-         			<div><input id="returnhome" type="submit" value="Home Screen"></div>
-   				</form>
-    			<form action="javascript:void(0);">
-         			<div><input id="makeorcheckbets" type="submit" value="Place Bet"></div>
+         			<div><input id="inputer" type="text"></div>
+         			<div><input id="submitter" type="submit" value="Submit"></div>
    				</form>
     		</td>
     	</tr>
@@ -57,7 +56,7 @@
             	{
             	   if (--apisToLoad == 0) 
             	   {
-            	     signin(true, showhandle);
+            	     signin(true, hidelogin);
             	   }
             	}
             	  
@@ -69,24 +68,12 @@
                 
                 document.getElementById('loginButton').onclick = function() 
                 {
-                	signin(false,showhandle);
+                	signin(false, hidelogin);
                 }
-                document.getElementById('returnhome').onclick = function() 
+                document.getElementById('submitter').onclick = function() 
                 {
-                	showhome();
+                	loadnextgame();
                 }
-                document.getElementById('makeorcheckbets').onclick = function() 
-                {
-                	makeorcheckbets();
-                }
-                document.getElementById('thebutton').onclick = function() 
-                {
-                	thebutton();
-                }
-                
-                //Hide the button for now.  Set the button function to zero.
-                document.getElementById('thebutton').style.visibility = 'hidden';
-                thebuttonfunction = 0;
         }
         
         
@@ -95,18 +82,17 @@
     	//If the user is successfuly logged in than this function will use their email to fetch their handle and display it in the window.
       	//If the user is not logged in it will instead display the login button.
       	//If the user is logged in, but does not have an entry in the table it will show an error.
-      	function showhandle() 
+      	function hidelogin() 
         {
-      		var addy = "";
-    		
-    		//If the user is logged in take away the login button and add the user's handle in the welcome area.
+	   		//If the user is logged in take away the login button and add the user's handle in the welcome area.
     		var request = gapi.client.oauth2.userinfo.get().execute(function(resp)
       		{
       		   	if (!resp.code)
       		   	{
       		   		// User is signed in, so hide the button
       		   		document.getElementById('loginButton').style.visibility = 'hidden';
-      		   		getHandleFromAPI()  		
+      		   		game = 0;
+      		   		loadnextgame()  		
       		   	}
       		   	else 
       		   	{
@@ -117,43 +103,52 @@
         }
     	
     	
-    	function getHandleFromAPI()
+    	function loadnextgame()
     	{
+    		
+    		if (game > 0)
+    		{
+    			//document.getElementById('debug').innerText = document.getElementById('debug').innerText + 'Send: ' + context + ' ' + document.getElementById('inputer').value;
+    			
+    			try
+        		{
+        			//Build the Request Object
+     	            var requestData = {};
+     	            requestData.week = context_week;
+     	            requestData.home_team = context_home_team;
+     	            requestData.result =  document.getElementById('inputer').value
+        			
+        			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});		
+        		}		
+        		catch(err)
+              	{
+        			document.getElementById('debug').innerText = document.getElementById('debug').innerText + 'Failed to set score.';
+              	}
+    		}
+    		
+    		
+    		
     		try
            	{
-    			gapi.client.leagueadmin.getUser().execute(function(resp)  
+    			gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)  
         		{		
         			if (!resp.code) 
 	               	{
     	    			resp.items = resp.items || [];
+	    	   			game++;
 	    	   			
-    	    			for (var i=0;i<resp.items.length;i++)
-		       			{
-		       				result_handle = resp.items[i].handle;
-		       				result_name = resp.items[i].name;
-		       				result_closed = resp.items[i].betting_closed;	
-	                   	}
-    	        	    
-    	    			if (result_name == "Error")
+    	    			
+	    	   			document.getElementById('result').innerText = 'On the right side, please input the actual line between the ' + resp.items[game].homeTeam + ' and the ' + resp.items[game].awayTeam + '.';
+    	    			context_home_team = resp.items[game].homeTeam;
+    	    			context_week = resp.items[game].week;
+	    	   			
+	    	   			
+	    	   			if (game==resp.items.length)
     	    			{
-    	    				document.getElementById('greetingtext').innerText = result_handle;
+    	    				game = -1;	
     	    			}
-    	    			else
-    	    			{
-    	    				closed = 0;
-    	    				document.getElementById('greetingtext').innerText = 'Logged In As: ' + result_handle;
-    	    				if (result_closed == 1)
-    	    				{
-    	    					document.getElementById('makeorcheckbets').value = "Show My Bets";
-    	    					closed = 1;
-    	    				}
-    	    				else if (result_closed == 0)
-    	    				{
-    	    					document.getElementById('makeorcheckbets').value = "Place Bet";
-    	    				}
-    	    				
-    	    				showhome();
-    	    			}
+	    	   			
+	    	
 	               	}
     	    		else
         			{
@@ -163,278 +158,11 @@
            	}
           	catch(err)
           	{
-          		return "Error: Error with Result Set.";
+          		document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
           	}
     	}
     	
-    	//Shows the home screen.
-    	function showhome()
-    	{
-    		//Hide the button for now.
-            document.getElementById('thebutton').style.visibility = 'hidden';
-    		
-    		try
-    		{
-    			var odds = "";
-    			var theHTML = "";
-    			
-    			//Build the Request Object
- 	            var requestData = {};
- 	            requestData.this_week = false;
- 	            requestData.no_house = true;
-    			
-    			gapi.client.leagueadmin.getUserBets(requestData).execute(function(resp)  
-        		{		
-        			if (!resp.code) 
-	               	{
-    	    			resp.items = resp.items || [];
-	    	   			
-    	    			if (resp.items.length > 0)    	    			
-    	    			{
-    	    				//setup the table structure.
-    	        			theHTML = '<table style="width:100%"><tr><td>Week</td><td>Team Picked</td><td>odds</td><td>Opponent</td><td>Result</td></tr>';
-    	    				
-    	    				for (var i=0;i<resp.items.length;i++)
-		       				{
-		       					theHTML = theHTML + "<tr><td>" + resp.items[i].week + "</td><td>" + resp.items[i].pickTeam + "</td><td>";
-    	    					theHTML = theHTML + oddstostring(resp.items[i].odds) + "</td><td>" + resp.items[i].oppTeam + "</td><td>" + resp.items[i].result + "</td></tr>";
-	                   		}
-    	    				theHTML = theHTML + "</table>";
-    	    				document.getElementById('result').innerHTML = theHTML;
-	               		}
-    	    			else
-    	    			{
-    	    				document.getElementById('result').innerHTML = "Welcome to a New Season";
-    	    			}
-	               	}
-    	    		else
-        			{
-    	    			document.getElementById('debug').innerText = 'Error in retreiving bets from api 1';
-        			}
-        		});
-    		}
-    		catch(err)
-          	{
-    			document.getElementById('debug').innerText = 'Error in retreiving bets from api 2';
-          	}
-    	
-    	}
-    	
-    	function makeorcheckbets()
-    	{
-    		var theHTML = "";
-    		var theOptions = '<option value="0">No Bet</option>';
-    		
-    		//Set the staged bets to zero
-    		StagedBet = 0;
-
-    		if (closed = 0)
-    		{
-    			gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)  
-        		{		
-        			if (!resp.code) 
-    	       		{
-           				resp.items = resp.items || [];
-    	   	   			
-	           			if (resp.items.length > 0)    	    			
-   	        			{
-    	       				//Setup the table structure to show the bets.
-        	   	    		theHTML = theHTML + '<table style="width:100%"><tr><td style="width:40%">Home Team</td><td style="width:20%">Line</td><td style="width:40%">Away Team</td></tr>';
-           				
-           					for (var i=0;i<resp.items.length;i++)
-    	   					{
-           						//Since the teams have games, make them options to bet.
-           						theOptions = theOptions + '<option value="' + resp.items[i].homeTeam + '">' + resp.items[i].homeTeam + '</option>';
-           						theOptions = theOptions + '<option value="' + resp.items[i].awayTeam + '">' + resp.items[i].awayTeam + '</option>';
-           					
-	           					//Insert a row in the table for the game
-    	       					theHTML = theHTML + '<tr><td>' + resp.items[i].homeTeam + '</td><td>' + oddstostring(resp.items[i].odds) + '</td><td>' + resp.items[i].awayTeam + '</td></tr>';
-           					
-           					
-    		           		}
-    	       		
-           					//Setup the form for placing bet.
-       		    			theHTML = theHTML + '</table>';
-       		    			theHTML = theHTML + '<div id="ThePrompt">Select team to bet on:</div>';
-       		    			theHTML = theHTML + '<div id="TheForm"><form action="javascript:void(0)">';
-	       		    		theHTML = theHTML + '<select name="Bet" onchange="updatestagedbet(this)">' + theOptions + '</select>';
-    	   		    		theHTML = theHTML + '</form></div>';
-       		    		
-       			    		//Change the name of the button
-       			    		document.getElementById('thebutton').value = 'Place the Bet';
-       		    		
-       		    			//Put the button back and make the global variable for thebuttonfunction equal to 1.
-       		    			document.getElementById('thebutton').style.visibility = '';
-       		    			thebuttonfunction = 1;
-       		    		
-       		    			document.getElementById('result').innerHTML = theHTML;
-	           			}
-    	       			else
-        	   			{
-           					document.getElementById('result').innerHTML = "Games are not listed yet for this week!";
-           				}
-    	       		}
-           			else
-	        		{
-    	       			document.getElementById('debug').innerText = 'Error retreiving bets from the API';
-        			}
-        		});
-    		}
-    		else
-    		{
-    			try
-        		{
-        			var odds = "";
-        			var theHTML = "";
-        			
-        			//Build the Request Object
-     	            var requestData = {};
-     	            requestData.this_week = true;
-     	            requestData.no_house = false;
-        			
-        			gapi.client.leagueadmin.getUserBets(requestData).execute(function(resp)  
-            		{		
-            			if (!resp.code) 
-    	               	{
-        	    			resp.items = resp.items || [];
-    	    	   			
-        	    			if (resp.items.length > 0)    	    			
-        	    			{
-        	    				//setup the table structure.
-        	        			theHTML = '<div>Bets are now locked.  Here are your bets for the week:</div>'
-        	    				theHTML = '<table style="width:100%"><tr><td>Team Picked</td><td>Line</td><td>Team Against</td><td>Original Better(s)</td><td>Wager</td></tr>';
-        	    				
-        	    				for (var i=0;i<resp.items.length;i++)
-    		       				{
-    		       					if (resp.items[i] != "")
-        	    					{
-        	    						theHTML = theHTML + "<tr><td>" + resp.items[i].pickTeam + "</td><td>";
-        	    						theHTML = theHTML + oddstostring(resp.items[i].odds) + "</td><td>" + resp.items[i].oppTeam + "</td><td>" 
-        	    						theHTML = theHTML + resp.items[i].againstyou + "</td><td>" + resp.items[i].netbet + "</td></tr>";
-        	    					}
-    		       					else
-    		       					{
-    		       						theHTML = theHTML + "<tr><td>" + resp.items[i].pickTeam + "</td><td>";
-        	    						theHTML = theHTML + oddstostring(resp.items[i].odds) + "</td><td>" + resp.items[i].oppTeam + "</td><td>" 
-        	    						theHTML = theHTML + "You!</td><td>Your Standard</td></tr>";
-    		       					}
-    	                   		}
-        	    				theHTML = theHTML + "</table>";
-        	    				document.getElementById('result').innerHTML = theHTML;
-    	               		}
-        	    			else
-        	    			{
-        	    				document.getElementById('result').innerHTML = "You don't have a position on any teams!";
-        	    			}
-    	               	}
-        	    		else
-            			{
-        	    			document.getElementById('debug').innerText = 'Error in retreiving bets from api 1';
-            			}
-            		});
-        		}
-        		catch(err)
-              	{
-        			document.getElementById('debug').innerText = 'Error in retreiving bets from api 2';
-              	}
-    			
-    			
-    			
-    			
-    			
-    			
-    			
-    			document.getElementById('result').innerHTML = theHTML;
-    			
-    		}
-    		
-    		
-    	}
-    	
-    	//Updates the bets that are not yet placed onclick.
-    	function updatestagedbet(e)
-    	{
-    		StagedBet = e.options[e.selectedIndex].value;
-    	}
-    	
-    	//Converts odds to a string for display.
-    	function oddstostring(odds)
-    	{
-    		//Setup a string to show the odds in expected format.
-			if (odds > 0)
-			{
-				return "+" + odds;
-			}
-			else if (odds == 0)
-			{
-				return "Even";
-			}
-			else
-			{
-				return odds;
-			}
-    	}
-    	
- 		//This function deals with a push of "the button"
- 		function thebutton()
- 		{
- 			if (thebuttonfunction = 0)
- 			{
- 				document.getElementById('debug').innerText = 'The button was pushed when it should not have been active.';
- 			}
- 			else if (thebuttonfunction = 1) //This indicates that the button push was for placing bets.
- 			{
- 				var theHTML = "";
- 				 				
- 				theHTML = "" + placeabet(StagedBet);
- 				document.getElementById('result').innerHTML = theHTML;
- 				
- 				//Hide the button for now.  Set the button function to zero.
-                document.getElementById('thebutton').style.visibility = 'hidden';
-                thebuttonfunction = 0;
- 			}
- 			
- 			
- 				
- 		}
- 		
- 		//This function sends a current week bet on the team and returns a status message
- 		function placeabet(team)
- 		{
- 			try
-    		{
- 				 //Build the Request Object
- 	            var requestData = {};
- 	            requestData.team = team;
-	        	
- 	        	gapi.client.leagueadmin.makebet(requestData).execute(function(resp) 
-        		{		
-        			if (!resp.code) 
-	               	{
-    	    			resp.items = resp.items || [];
-	    	   			
-    	    			if (resp.items.length > 0)    	    			
-    	    			{
-    	    				return "Yay! " + resp.items[0].week;
-	               		}
-    	    			else
-    	    			{
-    	    				return "Oddly there were no errors, but no response.";
-    	    			}
-	               	}
-    	    		else
-        			{
-    	    			return "There was a code trying to place the bet."
-        			}
-        		});
-    		}
-    		catch(err)
-          	{
-    			return "There was an error trying to place the bet on " + team + ".";
-          	}
- 		}
-        
-    </script>
+    </script>	
     <script src="https://apis.google.com/js/client.js?onload=init"></script>
     
     
