@@ -871,6 +871,110 @@ public class YourFirstAPI
 	}
 		
 	//Admin Screen Method to change the current week to the next week (set the preGameProcess flag to zero, calculate the result of all the bets that week).
+	//Currently this method requires that the next week actually be the next one (by id order) in the database.
+	@ApiMethod(name="nextweek", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID})
+	public void nextweek (User guser) throws UnauthorizedException
+	{
+		String strquery=null;
+		String strurl=null;
+					
+		try 
+		{
+				
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) 
+			{
+			    // Load the class that provides the new "jdbc:google:mysql://" prefix.
+			    Class.forName("com.mysql.jdbc.GoogleDriver");
+			    strurl = "jdbc:google:mysql://focal-acronym-94611:bedb?user=root";
+			} 
+			else {
+			    // Local MySQL instance to use during development.
+			    Class.forName("com.mysql.jdbc.Driver");
+			    strurl = "jdbc:mysql://127.0.0.1:3306/bedb?user=root";
+			}
+				
+				
+		} 
+		catch (ClassNotFoundException e) {
+			return;
+		}
+			
+		Connection conn = null;
+		try 
+		{
+			conn = DriverManager.getConnection(strurl);
+			ResultSet rs;
+			int week_id;
+			
+			//This checks to be sure that the requesting user is an administrator (if they are not, the method should fail).
+			strquery = "SELECT isAdmin FROM bedb1.Users WHERE email = '" + guser.getEmail() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				if (!rs.getBoolean("isAdmin"))
+				{
+					return;
+				}
+			}
+			else
+			{
+				return;
+			}
+			
+			//Look up the next week (at this point you can only add games for next week and the next week must be the next one in the system.
+			strquery = "SELECT MIN(w.id) AS next_week_id, w.name_long AS week_name FROM bedb1.Weeks w WHERE w.id > (SELECT current_week From bedb1.SysInfo);";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				week_id = rs.getInt("next_week_id");
+				
+			}
+			else
+			{
+				return;
+			}
+			
+			//Set the week to next week.
+			strquery = "UPDATE bedb1.SysInfo SET current_week = " + week_id + ";";
+			conn.createStatement().executeUpdate(strquery);
+			
+			
+			//Reset the preGameProcess back to zero (indicating that bets are open).
+			strquery = "UPDATE bedb1.SysInfo SET preGameProcess = 0;";
+			conn.createStatement().executeUpdate(strquery);
+			
+			conn.close();
+
+		}
+		catch (SQLException e) 
+		{
+			return;
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/*********************************************************************************************/
 	/***** These Are The Old League Admin API Methods That I Used to Test The Initial Setup ******/

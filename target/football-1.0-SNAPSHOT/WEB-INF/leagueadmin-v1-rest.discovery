@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/diF-YrkuK257QnpoQCN7hDDICyQ\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/znzEir-VzOaQCYfi1JuUoIzhSkg\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -363,6 +363,14 @@
    "response": {
     "$ref": "BetCollection"
    },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "nextweek": {
+   "id": "leagueadmin.nextweek",
+   "path": "nextweek",
+   "httpMethod": "POST",
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]
