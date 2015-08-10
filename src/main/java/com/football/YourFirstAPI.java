@@ -156,7 +156,7 @@ public class YourFirstAPI
 		try 
 		{
 			conn = DriverManager.getConnection(strurl);
-			strquery = "SELECT w.name_long AS theweek, th.team AS hometeam, ta.team AS awayteam, g.home_line AS line FROM bedb1.SysInfo AS s INNER JOIN bedb1.Weeks AS w ON w.id = s.current_week INNER JOIN bedb1.Games AS g ON w.id = g.week_id INNER JOIN bedb1.Teams AS th ON g.home = th.id INNER JOIN bedb1.Teams AS ta ON g.away = ta.id;";
+			strquery = "SELECT w.name_long AS theweek, th.team AS hometeam, ta.team AS awayteam, g.home_line AS line FROM bedb1.SysInfo AS s INNER JOIN bedb1.Weeks AS w ON w.id = s.current_week INNER JOIN bedb1.Games AS g ON w.id = g.week_id INNER JOIN bedb1.Teams AS th ON g.home = th.id INNER JOIN bedb1.Teams AS ta ON g.away = ta.id Order By g.id;";
 			ResultSet rs = conn.createStatement().executeQuery(strquery);
 			int gamecount = 0;
 			while (rs.next())
@@ -221,6 +221,7 @@ public class YourFirstAPI
 			return bets;
 		} 
 		
+		//First, make sure that bets aren't closed for the week.
 		//First, check to see if the user either has a bet on the game already.  
 		//If they already have a bet on the team that they asked to bet on, simply inform them that they already have the bet.
 		//If they have an existing bet on the other team, then delete that bet.
@@ -228,8 +229,30 @@ public class YourFirstAPI
 		try 
 		{
 			conn = DriverManager.getConnection(strurl);
-			strquery = "SELECT b.id AS betnum, th.team AS hometeam, ta.team AS awayteam, b.home AS homebetbool FROM bedb1.Bets as b INNER JOIN bedb1.Games as g ON g.id = b.game_id INNER JOIN bedb1.SysInfo as s ON s.current_week = g.week_id INNER JOIN bedb1.Teams AS th ON g.home = th.id INNER JOIN bedb1.Teams AS ta ON g.away = ta.id WHERE b.email = '" + guser.getEmail() + "' AND (th.team = '" + teamin + "' OR ta.team = '" + teamin + "');";
+			
+			
+			strquery = "SELECT s.preGameProcess AS pgp FROM bedb1.SysInfo s;";
 			ResultSet rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				if (rs.getInt("pgp") == 1)
+				{
+					bet = new Bet("Bets are closed, call your UI Designer!", "", "", 0, "","");
+					bets.add(bet);
+					conn.close();
+					return bets;
+				}
+			}
+			else
+			{
+				bet = new Bet("Nothin in sysInfo... Call Jonathan!", "", "", 0, "","");
+				bets.add(bet);
+				conn.close();
+				return bets;
+			}
+			
+			strquery = "SELECT b.id AS betnum, th.team AS hometeam, ta.team AS awayteam, b.home AS homebetbool FROM bedb1.Bets as b INNER JOIN bedb1.Games as g ON g.id = b.game_id INNER JOIN bedb1.SysInfo as s ON s.current_week = g.week_id INNER JOIN bedb1.Teams AS th ON g.home = th.id INNER JOIN bedb1.Teams AS ta ON g.away = ta.id WHERE b.email = '" + guser.getEmail() + "' AND (th.team = '" + teamin + "' OR ta.team = '" + teamin + "');";
+			rs = conn.createStatement().executeQuery(strquery);
 			while (rs.next())
 			{
 				if (rs.getInt("homebetbool") == 1)
@@ -548,12 +571,12 @@ public class YourFirstAPI
 				if (this_week == true)
 				{
 					//The query if it's just this week.
-					strquery = "Select h.other_bettees AS bettees, ls.bet_size AS bet_size, w.name_long AS game_week, g.result AS result, b.home AS picked_home, ht.team AS home_team, at.team AS away_team, g.home_line AS home_line, u.handle AS otherside From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.SysInfo s ON s.current_week = g.week_id INNER JOIN bedb1.Teams ht ON g.home = ht.id INNER JOIN bedb1.Teams at ON g.away = at.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Users u ON u.email = b.email INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "' ORDER BY g.id;";
+					strquery = "Select h.other_bettees AS bettees, ls.bet_size AS bet_size, w.name_long AS game_week, g.home_result AS result, b.home AS picked_home, ht.team AS home_team, at.team AS away_team, g.home_line AS home_line, u.handle AS otherside From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.SysInfo s ON s.current_week = g.week_id INNER JOIN bedb1.Teams ht ON g.home = ht.id INNER JOIN bedb1.Teams at ON g.away = at.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Users u ON u.email = b.email INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "' ORDER BY g.id;";
 				}
 				else if (this_week == false)
 				{
 					//The query if it's all weeks.
-					strquery = "Select h.other_bettees AS bettees, ls.bet_size AS bet_size, w.name_long AS game_week, g.result AS result, b.home AS picked_home, ht.team AS home_team, at.team AS away_team, g.home_line AS home_line, u.handle AS otherside From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.Teams ht ON g.home = ht.id INNER JOIN bedb1.Teams at ON g.away = at.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Users u ON u.email = b.email INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "' ORDER BY g.id;";
+					strquery = "Select h.other_bettees AS bettees, ls.bet_size AS bet_size, w.name_long AS game_week, g.home_result AS result, b.home AS picked_home, ht.team AS home_team, at.team AS away_team, g.home_line AS home_line, u.handle AS otherside From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.Teams ht ON g.home = ht.id INNER JOIN bedb1.Teams at ON g.away = at.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Users u ON u.email = b.email INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "' ORDER BY g.id;";
 				}
 					
 				
@@ -954,7 +977,81 @@ public class YourFirstAPI
 	}
 	
 	
-	
+	//Admin Screen Method to delete any games that have been added for next week.  This is useful if someone got part way through adding games and then lost connection.
+	@ApiMethod(name="clearnextweeksgames", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID})
+	public void clearnextweeksgames (User guser) throws UnauthorizedException
+	{
+		String strquery=null;
+		String strurl=null;
+					
+		try 
+		{
+				
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) 
+			{
+			    // Load the class that provides the new "jdbc:google:mysql://" prefix.
+			    Class.forName("com.mysql.jdbc.GoogleDriver");
+			    strurl = "jdbc:google:mysql://focal-acronym-94611:bedb?user=root";
+			} 
+			else {
+			    // Local MySQL instance to use during development.
+			    Class.forName("com.mysql.jdbc.Driver");
+			    strurl = "jdbc:mysql://127.0.0.1:3306/bedb?user=root";
+			}
+				
+				
+		} 
+		catch (ClassNotFoundException e) {
+			return;
+		}
+			
+		Connection conn = null;
+		try 
+		{
+			conn = DriverManager.getConnection(strurl);
+			ResultSet rs;
+			int week_id;
+			
+			//This checks to be sure that the requesting user is an administrator (if they are not, the method should fail).
+			strquery = "SELECT isAdmin FROM bedb1.Users WHERE email = '" + guser.getEmail() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				if (!rs.getBoolean("isAdmin"))
+				{
+					return;
+				}
+			}
+			else
+			{
+				return;
+			}
+			
+			//Look up what next week is.
+			strquery = "SELECT MIN(w.id) AS next_week_id, w.name_long AS week_name FROM bedb1.Weeks w WHERE w.id > (SELECT current_week From bedb1.SysInfo);";
+			rs = conn.createStatement().executeQuery(strquery);
+			if (rs.next())
+			{
+				week_id = rs.getInt("next_week_id");
+				
+			}
+			else
+			{
+				return;
+			}
+			
+			//Remove the games from next week.
+			strquery = "DELETE FROM Games WHERE week_id = " + week_id + ";";
+			conn.createStatement().executeUpdate(strquery);
+			
+			conn.close();
+
+		}
+		catch (SQLException e) 
+		{
+			return;
+		}
+	}
 	
 	
 	

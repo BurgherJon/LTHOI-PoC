@@ -26,10 +26,13 @@
     			<div id="result"></div>
    				<div id="debug"></div>	
     		</div></td>
-    		<td>
+    		<td align="center">
     			<form action="javascript:void(0);">
-         			<div><input id="inputer" type="text"></div>
+         			<div><div id="inputer1text"></div><input id="inputer1" type="text"></div>
+         			<div><div id="inputer2text"></div><input id="inputer2" type="text"></div>
+         			<div><div id="inputer3text"></div><input id="inputer3" type="text"></div>
          			<div><input id="submitter" type="submit" value="Submit"></div>
+         			<div><input id="done" type="submit" value="Done, Switch Weeks"></div>
    				</form>
     		</td>
     	</tr>
@@ -74,6 +77,10 @@
                 {
                 	loadnextgame();
                 }
+                document.getElementById('done').onclick = function() 
+                {
+                	done();
+                }
         }
         
         
@@ -105,10 +112,26 @@
     	
     	function loadnextgame()
     	{
-    		
-    		if (game > 0)
+    		//If this is where we are then the person is in the process of putting in new games.
+    		if (game < -1)
     		{
-    			//document.getElementById('debug').innerText = document.getElementById('debug').innerText + 'Send: ' + context + ' ' + document.getElementById('inputer').value;
+    			//Build the Request Object
+         	    var requestData = {};
+         	    requestData.home_team = document.getElementById('inputer1').value;
+         	    requestData.away_team = document.getElementById('inputer2').value;
+         	    requestData.home_line =  document.getElementById('inputer3').value;
+            			
+            	gapi.client.leagueadmin.addGame(requestData).execute(function(resp) {});
+            	
+            	document.getElementById('inputer1').value = '';
+          		document.getElementById('inputer2').value = '';
+          		document.getElementById('inputer3').value = '';
+    		}
+    		
+    		
+    		//If we're  just arriving at the add next week's games section, then remove any games that are already in there, add the last game, setup the new input screen.
+    		else if (game == -1)
+    		{
     			
     			try
         		{
@@ -116,7 +139,37 @@
      	            var requestData = {};
      	            requestData.week = context_week;
      	            requestData.home_team = context_home_team;
-     	            requestData.result =  document.getElementById('inputer').value
+     	            requestData.result =  document.getElementById('inputer1').value
+        			
+        			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});		
+        		}		
+        		catch(err)
+              	{
+        			document.getElementById('debug').innerText = document.getElementById('debug').innerText + 'Failed to set score.';
+              	}
+    			
+    			
+    			gapi.client.leagueadmin.clearnextweeksgames().execute(function(resp) {});
+    			
+    			document.getElementById('inputer1text').innerText = 'Home:';
+          		document.getElementById('inputer2text').innerText = 'Away:';
+          		document.getElementById('inputer3text').innerText = 'Line:';
+          		document.getElementById('inputer2').visibility = 'visible';
+          		document.getElementById('inputer3').visibility = 'visible';
+          		document.getElementById('content').innerText = 'Use the inputs on the right to submit all of the games.';
+    			         		
+          		game = -2
+    		}
+    		
+    		else if (game > 0)
+    		{	
+    			try
+        		{
+        			//Build the Request Object
+     	            var requestData = {};
+     	            requestData.week = context_week;
+     	            requestData.home_team = context_home_team;
+     	            requestData.result =  document.getElementById('inputer1').value
         			
         			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});		
         		}		
@@ -126,40 +179,59 @@
               	}
     		}
     		
-    		
-    		
-    		try
-           	{
-    			gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)  
-        		{		
-        			if (!resp.code) 
-	               	{
-    	    			resp.items = resp.items || [];
-	    	   			game++;
-	    	   			
-    	    			
-	    	   			document.getElementById('result').innerText = 'On the right side, please input the actual line between the ' + resp.items[game].homeTeam + ' and the ' + resp.items[game].awayTeam + '.';
-    	    			context_home_team = resp.items[game].homeTeam;
-    	    			context_week = resp.items[game].week;
-	    	   			
-	    	   			
-	    	   			if (game==resp.items.length)
-    	    			{
-    	    				game = -1;	
-    	    			}
+    		if (game > -1)
+    		{
+    			try
+           		{
+    				gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)  
+        			{		
+        				if (!resp.code) 
+	               		{
+    	    				resp.items = resp.items || [];
+	    	   				
+    	    				document.getElementById('result').innerText = 'On the right side, please input the actual line between the ' + resp.items[game].homeTeam + ' and the ' + resp.items[game].awayTeam + '.';
+    	    				context_home_team = resp.items[game].homeTeam;
+    	    				context_week = resp.items[game].week;
+    	    				
+    	    				game++;
+    	    				
+    	    				if (game==(resp.items.length))
+    	    				{
+    	    					game = -1;	
+    	    				}
+    	    				
+    	    				
 	    	   			
 	    	
-	               	}
-    	    		else
-        			{
-    	    			document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
-        			}
-        		});
-           	}
-          	catch(err)
-          	{
-          		document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
-          	}
+	               		}
+    	    			else
+        				{
+    	    				document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
+        				}
+        			});
+           		}
+          		catch(err)
+          		{
+          			document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
+          		}
+          		
+          		document.getElementById('inputer1').value = '';
+          		document.getElementById('inputer1text').innerText = 'Result:';
+          		document.getElementById('inputer2text').innerText = '';
+          		document.getElementById('inputer3text').innerText = '';
+          		document.getElementById('inputer2').visibility = 'hidden';
+          		document.getElementById('inputer3').visibility = 'hidden';
+          		
+          		
+          		
+          		
+    		}
+    		
+    	}
+    	
+    	function done()
+    	{
+    		gapi.client.leagueadmin.nextweek().execute(function(resp) {});
     	}
     	
     </script>	

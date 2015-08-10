@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/znzEir-VzOaQCYfi1JuUoIzhSkg\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/IIJAQUnfDM5dVeeiFaeezhSfx0U\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -264,6 +264,12 @@
    "returns": {
     "$ref": "Game"
    },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "leagueadmin.clearnextweeksgames": {
+   "id": "leagueadmin.clearnextweeksgames",
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/znzEir-VzOaQCYfi1JuUoIzhSkg\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/IIJAQUnfDM5dVeeiFaeezhSfx0U\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -271,6 +271,14 @@
    "response": {
     "$ref": "Game"
    },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "clearnextweeksgames": {
+   "id": "leagueadmin.clearnextweeksgames",
+   "path": "clearnextweeksgames",
+   "httpMethod": "POST",
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]
