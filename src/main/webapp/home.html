@@ -32,6 +32,9 @@
     			<form action="javascript:void(0);">
          			<div><input id="makeorcheckbets" type="submit" value="Place Bet"></div>
    				</form>
+   				<form action="javascript:void(0);">
+         			<div><input id="standings" type="submit" value="Check Standings"></div>
+   				</form>
     		</td>
     	</tr>
     </table>
@@ -83,6 +86,10 @@
                 {
                 	thebutton();
                 }
+                document.getElementById('standings').onclick = function() 
+                {
+                	standings();
+                }
                 
                 //Hide the button for now.  Set the button function to zero.
                 document.getElementById('thebutton').style.visibility = 'hidden';
@@ -127,11 +134,24 @@
 	               	{
     	    			resp.items = resp.items || [];
 	    	   			
+    	    			var result_handle;
+    	    			var result_name;
+    	    			var result_closed;
+    	    			var result_wins;
+    	    			var result_losses;
+    	    			var result_pushes;
+    	    			var result_gains;
+    	    			
+    	    			
     	    			for (var i=0;i<resp.items.length;i++)
 		       			{
 		       				result_handle = resp.items[i].handle;
 		       				result_name = resp.items[i].name;
-		       				result_closed = resp.items[i].betting_closed;	
+		       				result_closed = resp.items[i].betting_closed;
+		       				result_wins = resp.items[i].wins;
+		       				result_losses = resp.items[i].losses;
+		       				result_pushes = resp.items[i].pushes;
+		       				result_gains = resp.items[i].gains;
 	                   	}
     	        	    
     	    			if (result_name == "Error")
@@ -140,7 +160,11 @@
     	    			}
     	    			else
     	    			{
-    	    				document.getElementById('greetingtext').innerText = 'Logged In As: ' + result_handle;
+    	    				var theHTML;
+    	    				theHTML = result_name + "<br>" + result_wins + "-" + result_losses + "-" + result_pushes;
+    	    				theHTML = theHTML + "<br>" + result_gains;
+    	    				document.getElementById('greetingtext').innerHTML = theHTML;
+    	    				
     	    				if (result_closed == 1)
     	    				{
     	    					document.getElementById('makeorcheckbets').value = "Show My Bets";
@@ -163,6 +187,18 @@
           	{
           		return "Error: Error with Result Set.";
           	}
+    	}
+    	
+    	//Shows the standings
+    	function standings()
+    	{
+    		var theHTML = "";
+    		
+    		
+    		theHTML = "Thanks for clicking, still working on this though.";
+    		
+    		
+    		document.getElementById('result').innerHTML = theHTML;
     	}
     	
     	//Shows the home screen.
@@ -304,18 +340,11 @@
         	    				
         	    				for (var i=0;i<resp.items.length;i++)
     		       				{
-    		       					if (resp.items[i] != "")
-        	    					{
+
         	    						theHTML = theHTML + "<tr><td>" + resp.items[i].pickTeam + "</td><td>";
         	    						theHTML = theHTML + oddstostring(resp.items[i].odds) + "</td><td>" + resp.items[i].oppTeam + "</td><td>" 
         	    						theHTML = theHTML + resp.items[i].againstyou + "</td><td>" + resp.items[i].netbet + "</td></tr>";
-        	    					}
-    		       					else
-    		       					{
-    		       						theHTML = theHTML + "<tr><td>" + resp.items[i].pickTeam + "</td><td>";
-        	    						theHTML = theHTML + oddstostring(resp.items[i].odds) + "</td><td>" + resp.items[i].oppTeam + "</td><td>" 
-        	    						theHTML = theHTML + "You!</td><td>Your Standard</td></tr>";
-    		       					}
+
     	                   		}
         	    				theHTML = theHTML + "</table>";
         	    				document.getElementById('result').innerHTML = theHTML;

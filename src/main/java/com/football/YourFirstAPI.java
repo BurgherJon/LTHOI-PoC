@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 
 
+
 //DB Enabling Libraries
 import java.io.*;
 import java.sql.*;
@@ -106,6 +107,106 @@ public class YourFirstAPI
 				user = new FootballUser("Error", "Error: You're Not A Registered User", null);
 			}
 			
+			
+			
+			
+			//This next query will be used to pull all of the users bets.  
+			//Also keeps track of the amount up or down.
+			int res;
+			int wins=0;
+			int losses=0;
+			int pushes=0;
+			double gains=0;
+			double bs=0.0;
+			strquery = "SELECT ls.bet_size AS bet_size, w.name_long AS game_week, b.home AS picked_home, g.home_result AS home_result, th.team AS home_team, ta.team AS away_team, g.home_line AS home_line FROM bedb1.Bets b INNER JOIN bedb1.Games g ON b.game_id = g.id INNER JOIN bedb1.Weeks w ON g.week_id = w.id INNER JOIN bedb1.Teams th ON g.home = th.id INNER JOIN bedb1.Teams ta ON g.away = ta.id INNER JOIN bedb1.League_Seasons ls ON b.league_season_id = ls.id WHERE ls.id = 1 AND b.email = '" + guser.getEmail() + "' ORDER BY w.id;";
+			rs = conn.createStatement().executeQuery(strquery);
+			while (rs.next())
+			{
+				if (rs.getInt("picked_home") == 1)
+				{
+					if ((rs.getInt("home_line") > rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains + ((double)rs.getInt("bet_size"));
+						wins = wins + 1;
+					}
+					else if ((rs.getInt("home_line") < rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains - ((double)rs.getInt("bet_size"));
+						losses = losses + 1;
+					}
+					else if (!rs.wasNull())
+					{
+						pushes = pushes + 1;
+					}
+				}
+				else
+				{
+					if ((rs.getInt("home_line") < rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains + ((double)rs.getInt("bet_size"));
+						wins = wins + 1;
+					}
+					else if ((rs.getInt("home_line") > rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains - ((double)rs.getInt("bet_size"));
+						losses = losses + 1;
+					}
+					else if (!rs.wasNull())
+					{
+						pushes = pushes + 1;
+					}
+				}
+			}
+			user.setRecord(wins, losses, pushes);
+			
+			//Figures out the amount up or down a user is from their house bets then modifies the gains from above based on that.
+			strquery = "Select h.other_bettees AS other_bettees, ls.bet_size AS bet_size, g.home_result AS home_result, b.home AS picked_home, g.home_line AS home_line From bedb1.House_Bets h INNER JOIN bedb1.Bets b ON b.id = h.parent_bet_id INNER JOIN bedb1.Games g ON g.id = b.game_id INNER JOIN bedb1.League_Seasons ls ON ls.id = b.league_season_id WHERE b.league_season_id = 1 AND h.email = '" + guser.getEmail() + "';";
+			rs = conn.createStatement().executeQuery(strquery);
+			String debug = "";
+			while (rs.next())
+			{
+				if (rs.getInt("picked_home") == 0)
+				{
+					if ((rs.getInt("home_line") > rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains + (((double)(rs.getInt("bet_size"))) / ((double)rs.getInt("other_bettees")));
+					}
+					else if ((rs.getInt("home_line") < rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains - (((double)(rs.getInt("bet_size"))) / ((double)rs.getInt("other_bettees")));
+					}
+				}
+				else
+				{
+					if ((rs.getInt("home_line") > rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains - (((double)(rs.getInt("bet_size"))) / ((double)rs.getInt("other_bettees")));
+					}
+					else if ((rs.getInt("home_line") < rs.getInt("home_result")) && !rs.wasNull())
+					{
+						gains = gains + (((double)(rs.getInt("bet_size"))) / ((double)rs.getInt("other_bettees")));
+					}
+				}
+			}
+			
+			
+			
+			//Change the amount up or down in to a useful string.
+			if (gains > 0)
+			{
+				user.setGains("Up $" + Math.round(gains*100.0)/100.0);
+			}
+			else if (gains < 0)
+			{
+				user.setGains("Down $" + Math.round(gains*100.0)/100.0);
+			}
+			else
+			{
+				user.setGains("Even");
+			}
+		
+			
+			
 			conn.close();
 		} 
 		catch (SQLException e) 
@@ -161,7 +262,7 @@ public class YourFirstAPI
 			int gamecount = 0;
 			while (rs.next())
 			{
-				game = new Game(0, rs.getString("theweek"),rs.getString("hometeam"),rs.getString("awayteam"),rs.getLong("line"),"");
+				game = new Game(0, rs.getString("theweek"),rs.getString("hometeam"),rs.getString("awayteam"),rs.getDouble("line"),"");
 				
 				games.add(game);
 				
@@ -216,7 +317,7 @@ public class YourFirstAPI
 			
 		} 
 		catch (ClassNotFoundException e) {
-			bet = new Bet("Error creating database connection.", "", "", 0, "","");
+			bet = new Bet("Error creating database connection.", "", "", 0, "","",0);
 			bets.add(bet);
 			return bets;
 		} 
@@ -237,7 +338,7 @@ public class YourFirstAPI
 			{
 				if (rs.getInt("pgp") == 1)
 				{
-					bet = new Bet("Bets are closed, call your UI Designer!", "", "", 0, "","");
+					bet = new Bet("Bets are closed, call your UI Designer!", "", "", 0, "","",0);
 					bets.add(bet);
 					conn.close();
 					return bets;
@@ -245,7 +346,7 @@ public class YourFirstAPI
 			}
 			else
 			{
-				bet = new Bet("Nothin in sysInfo... Call Jonathan!", "", "", 0, "","");
+				bet = new Bet("Nothin in sysInfo... Call Jonathan!", "", "", 0, "","",0);
 				bets.add(bet);
 				conn.close();
 				return bets;
@@ -266,7 +367,7 @@ public class YourFirstAPI
 				
 				if (betteam.equals(teamin))
 				{
-					bet = new Bet(("You already had a bet on the " + teamin + "!"), "", "", 0, "","");
+					bet = new Bet(("You already had a bet on the " + teamin + "!"), "", "", 0, "","",0);
 					bets.add(bet);
 					conn.close();
 					return bets;
@@ -282,7 +383,7 @@ public class YourFirstAPI
 		} 
 		catch (SQLException e) 
 		{
-			bet = new Bet(("SQL Error:" + e.getMessage()), "", "", 0, "","");
+			bet = new Bet(("SQL Error:" + e.getMessage()), "", "", 0, "","",0);
 			bets.add(bet);
 			return bets;
 		}
@@ -315,7 +416,7 @@ public class YourFirstAPI
 		} 
 		catch (SQLException e) 
 		{
-			bet = new Bet(("SQL Error:" + e.getMessage()), "", "", 0, "","");
+			bet = new Bet(("SQL Error:" + e.getMessage()), "", "", 0, "","",0);
 			bets.add(bet);
 			return bets;
 		}
@@ -329,13 +430,13 @@ public class YourFirstAPI
 			strquery = "INSERT INTO bedb1.Bets(email, league_season_id, game_id, home) VALUES ('" + guser.getEmail() + "', 1, (SELECT g.id AS game_id FROM bedb1.Games AS g INNER JOIN bedb1.SysInfo AS s ON g.week_id = s.current_week INNER JOIN bedb1.Teams AS th ON th.id = g.home INNER JOIN bedb1.Teams AS ta ON ta.id = g.away WHERE th.team = '" + teamin + "' OR ta.team = '" + teamin + "'), (SELECT IF (th.team = '" + teamin + "', 1, 0) AS home FROM bedb1.Games AS g INNER JOIN bedb1.SysInfo AS s ON g.week_id = s.current_week INNER JOIN bedb1.Teams AS th ON th.id = g.home INNER JOIN bedb1.Teams AS ta ON ta.id = g.away WHERE th.team = '" + teamin + "' OR ta.team = '" + teamin + "'));";
 			conn.createStatement().executeUpdate(strquery);
 			
-			bet = new Bet(("Successfully added bet on " + teamin + "."), strquery, "", 0, "","");
+			bet = new Bet(("Successfully added bet on " + teamin + "."), strquery, "", 0, "","",0);
 			bets.add(bet);
 			conn.close();
 		} 
 		catch (SQLException e) 
 		{
-			bet = new Bet(("SQL Error:" + e.getMessage()), "", "", 0, "","");
+			bet = new Bet(("SQL Error:" + e.getMessage()), "", "", 0, "","",0);
 			bets.add(bet);
 			return bets;
 		}
@@ -526,7 +627,7 @@ public class YourFirstAPI
 				
 		} 
 		catch (ClassNotFoundException e) {
-			bet = new Bet("Error",e.getMessage(),"",0,"","");
+			bet = new Bet("Error",e.getMessage(),"",0,"","",0);
 			bets.add(bet);
 			return bets;
 		}
@@ -560,7 +661,7 @@ public class YourFirstAPI
 					res = -1132;
 				}
 		
-				bet = new Bet(rs.getString("game_week"),res,rs.getInt("picked_home"),rs.getString("home_team"),rs.getString("away_team"),rs.getLong("home_line"), rs.getInt("bet_size"));
+				bet = new Bet(rs.getString("game_week"),res,rs.getInt("picked_home"),rs.getString("home_team"),rs.getString("away_team"),rs.getDouble("home_line"), ((double)rs.getInt("bet_size")));
 				bets.add(bet);
 				betcount++;
 			}
@@ -588,10 +689,10 @@ public class YourFirstAPI
 				boolean firstwith;
 				int picked_home;
 				int likebets;
-				long net;
+				double net;
 				while (rs.next())
 				{
-					net = 0;
+					net = 0.0;
 					likebets = 1;
 					picked_home = rs.getInt("picked_home");
 					home = rs.getString("home_team");
@@ -639,21 +740,39 @@ public class YourFirstAPI
 												
 					if (likebets > 0)
 					{
-						//The net bet is going to be the cost per bet times the like bets where cost per bet is the bet_size divided by the bettees.
-						net = rs.getInt("bet_size");
-						net = net / (rs.getInt("bettees"));
-						net = net * likebets;
 						
-						bet = new Bet(rs.getString("game_week"), res, picked_home, home, rs.getString("away_team"), rs.getLong("home_line"), against, net);
+						//The net bet is going to be the cost per bet times the like bets where cost per bet is the bet_size divided by the bettees.
+						net = ((double)(rs.getInt("bet_size")));
+						net = net / ((double)(rs.getInt("bettees")));
+						net = net * ((double)(likebets));
+						net = Math.round(net*100.0)/100.0;
+						
+						
+						if (picked_home == 0)
+						{
+							picked_home = 1;
+						}
+						else
+						{
+							picked_home = 0;
+						}
+						bet = new Bet(rs.getString("game_week"), res, picked_home, home, rs.getString("away_team"), rs.getDouble("home_line"), against, net);
 						bets.add(bet);
 					}
+					
+					//This happens because there are more bets against the first one read then for it.
+					//This means the people you thought were with you should be stored as against
+					//It also means that likebets will be negative and needs to be converted.
 					else if (likebets < 0)
 					{
+						
 						//The net bet is going to be the cost per bet (as above) times the like bets.
-						net = rs.getInt("bet_size");
-						net = net / (rs.getInt("bettees"));
-						net = net * likebets * -1;
-							
+						net = ((double)(rs.getInt("bet_size")));
+						net = net / ((double)(rs.getInt("bettees")));
+						net = net * ((double)(likebets)) * -1.0;
+						net = Math.round(net*100.0)/100.0;
+						
+						
 						//Since, as it turns out, there were more bets against the initial position than for it, we need to flip the picked_home variable.
 						if (picked_home == 0)
 						{
@@ -676,7 +795,7 @@ public class YourFirstAPI
 		} 
 		catch (SQLException e) 
 		{
-			bet = new Bet("SQL Error", e.getMessage(),"",0,"","");
+			bet = new Bet("SQL Error", e.getMessage(),"",0,"","",0);
 			bets.add(bet);
 			return bets;
 		}

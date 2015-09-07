@@ -9,6 +9,10 @@ public class FootballUser
 	String handle;
 	String email;
 	int betting_closed;
+	int wins;
+	int losses;
+	int pushes;
+	String gains;
 
 	public FootballUser()
 	{
@@ -56,5 +60,37 @@ public class FootballUser
 	public int getBetting_closed()
 	{
 		return this.betting_closed;
+	}
+	
+	public int getWins()
+	{
+		return this.wins;
+	}
+	
+	public int getLosses()
+	{
+		return this.losses;
+	}
+	
+	public int getPushes()
+	{
+		return this.pushes;
+	}
+	
+	public String getGains()
+	{
+		return this.gains;
+	}
+	
+	public void setGains(String gainsin)
+	{
+		this.gains = gainsin;
+	}
+	
+	public void setRecord(int winsin, int lossesin, int pushesin)
+	{
+		this.wins = winsin;
+		this.losses = lossesin;
+		this.pushes = pushesin;
 	}
 }

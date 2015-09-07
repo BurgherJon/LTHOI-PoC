@@ -40,6 +40,27 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "leagueadmin.preGameProcess" : {
+      "path" : "preGameProcess/{pass}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.preGameProcess",
+      "request" : {
+        "parameters" : {
+          "pass" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "leagueadmin.clearnextweeksgames" : {
       "path" : "clearnextweeksgames",
       "httpMethod" : "POST",
@@ -48,51 +69,6 @@
       "audiences" : [ ],
       "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.clearnextweeksgames",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "empty"
-      }
-    },
-    "leagueadmin.getNewMethodTest" : {
-      "path" : "usercollection",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.getNewMethodTest",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "leagueadmin.list" : {
-      "path" : "leaguecollection",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.getLeagues",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "leagueadmin.nextweek" : {
-      "path" : "nextweek",
-      "httpMethod" : "POST",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.nextweek",
       "request" : {
         "body" : "empty"
       },
@@ -115,21 +91,45 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "leagueadmin.preGameProcess" : {
-      "path" : "preGameProcess/{pass}",
-      "httpMethod" : "POST",
+    "leagueadmin.getNewMethodTest" : {
+      "path" : "usercollection",
+      "httpMethod" : "GET",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.preGameProcess",
+      "rosyMethod" : "com.football.YourFirstAPI.getNewMethodTest",
       "request" : {
-        "parameters" : {
-          "pass" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "leagueadmin.nextweek" : {
+      "path" : "nextweek",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.nextweek",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "empty"
+      }
+    },
+    "leagueadmin.list" : {
+      "path" : "leaguecollection",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.getLeagues",
+      "request" : {
         "body" : "empty"
       },
       "response" : {
@@ -165,6 +165,31 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "leagueadmin.getUserBets" : {
+      "path" : "betcollection/{this_week}/{no_house}",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.football.YourFirstAPI.getUserBets",
+      "request" : {
+        "parameters" : {
+          "this_week" : {
+            "type" : "boolean",
+            "required" : true
+          },
+          "no_house" : {
+            "type" : "boolean",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "leagueadmin.addGame" : {
       "path" : "addGame/{home_team}/{away_team}/{home_line}",
       "httpMethod" : "POST",
@@ -185,31 +210,6 @@
           },
           "home_line" : {
             "type" : "double",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "leagueadmin.getUserBets" : {
-      "path" : "betcollection/{this_week}/{no_house}",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.football.YourFirstAPI.getUserBets",
-      "request" : {
-        "parameters" : {
-          "this_week" : {
-            "type" : "boolean",
-            "required" : true
-          },
-          "no_house" : {
-            "type" : "boolean",
             "required" : true
           }
         },
@@ -256,6 +256,18 @@
           "betting_closed" : {
             "type" : "integer"
           },
+          "wins" : {
+            "type" : "integer"
+          },
+          "losses" : {
+            "type" : "integer"
+          },
+          "pushes" : {
+            "type" : "integer"
+          },
+          "gains" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           }
@@ -269,6 +281,54 @@
             "type" : "array",
             "items" : {
               "$ref" : "FootballUser"
+            }
+          }
+        }
+      },
+      "League" : {
+        "id" : "League",
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Game" : {
+        "id" : "Game",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer"
+          },
+          "week" : {
+            "type" : "string"
+          },
+          "homeodds" : {
+            "type" : "number"
+          },
+          "result" : {
+            "type" : "string"
+          },
+          "homeTeam" : {
+            "type" : "string"
+          },
+          "awayTeam" : {
+            "type" : "string"
+          },
+          "odds" : {
+            "type" : "number"
+          }
+        }
+      },
+      "GameCollection" : {
+        "id" : "GameCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "Game"
             }
           }
         }
@@ -306,15 +366,6 @@
           }
         }
       },
-      "League" : {
-        "id" : "League",
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          }
-        }
-      },
       "LeagueCollection" : {
         "id" : "LeagueCollection",
         "type" : "object",
@@ -327,45 +378,6 @@
           }
         }
       },
-      "Game" : {
-        "id" : "Game",
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer"
-          },
-          "week" : {
-            "type" : "string"
-          },
-          "homeodds" : {
-            "type" : "number"
-          },
-          "result" : {
-            "type" : "string"
-          },
-          "odds" : {
-            "type" : "number"
-          },
-          "homeTeam" : {
-            "type" : "string"
-          },
-          "awayTeam" : {
-            "type" : "string"
-          }
-        }
-      },
-      "GameCollection" : {
-        "id" : "GameCollection",
-        "type" : "object",
-        "properties" : {
-          "items" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "Game"
-            }
-          }
-        }
-      },
       "Bet" : {
         "id" : "Bet",
         "type" : "object",
@@ -374,8 +386,7 @@
             "type" : "string"
           },
           "odds" : {
-            "type" : "string",
-            "format" : "int64"
+            "type" : "number"
           },
           "result" : {
             "type" : "string"
@@ -384,8 +395,7 @@
             "type" : "string"
           },
           "netbet" : {
-            "type" : "string",
-            "format" : "int64"
+            "type" : "number"
           },
           "pickTeam" : {
             "type" : "string"
@@ -414,28 +424,28 @@
           "$ref" : "FootballUserCollection"
         }
       },
+      "com.football.YourFirstAPI.preGameProcess" : {
+        "response" : {
+          "$ref" : "League"
+        }
+      },
       "com.football.YourFirstAPI.clearnextweeksgames" : {
-      },
-      "com.football.YourFirstAPI.getNewMethodTest" : {
-        "response" : {
-          "$ref" : "UserCollection"
-        }
-      },
-      "com.football.YourFirstAPI.getLeagues" : {
-        "response" : {
-          "$ref" : "LeagueCollection"
-        }
-      },
-      "com.football.YourFirstAPI.nextweek" : {
       },
       "com.football.YourFirstAPI.getThisWeeksGames" : {
         "response" : {
           "$ref" : "GameCollection"
         }
       },
-      "com.football.YourFirstAPI.preGameProcess" : {
+      "com.football.YourFirstAPI.getNewMethodTest" : {
         "response" : {
-          "$ref" : "League"
+          "$ref" : "UserCollection"
+        }
+      },
+      "com.football.YourFirstAPI.nextweek" : {
+      },
+      "com.football.YourFirstAPI.getLeagues" : {
+        "response" : {
+          "$ref" : "LeagueCollection"
         }
       },
       "com.football.YourFirstAPI.setGameResult" : {
@@ -443,14 +453,14 @@
           "$ref" : "League"
         }
       },
-      "com.football.YourFirstAPI.addGame" : {
-        "response" : {
-          "$ref" : "Game"
-        }
-      },
       "com.football.YourFirstAPI.getUserBets" : {
         "response" : {
           "$ref" : "BetCollection"
+        }
+      },
+      "com.football.YourFirstAPI.addGame" : {
+        "response" : {
+          "$ref" : "Game"
         }
       },
       "com.football.YourFirstAPI.makebet" : {

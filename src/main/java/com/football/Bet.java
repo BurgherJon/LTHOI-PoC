@@ -8,12 +8,12 @@ public class Bet
 	String week;
 	String pickteam;
 	String oppteam;
-	long odds;
+	double odds;
 	String result;
 	
 	//The againstyou field and the net_bet are extra for house bets and shows you who picked the other side of the bet you were forced to take and what your net bet is.
 	String againstyou;
-	long netbet;
+	double netbet;
 	
 	
 	public Bet()
@@ -21,7 +21,7 @@ public class Bet
 		//blank
 	}
 
-	public Bet(String weekin, String pickteamin, String oppteamin, long oddsin, String resultin, String againstyouin)
+	public Bet(String weekin, String pickteamin, String oppteamin, double oddsin, String resultin, String againstyouin, double netbetin)
 	{
 		super();
 		
@@ -31,10 +31,11 @@ public class Bet
 		this.odds = oddsin;
 		this.result = resultin;
 		this.againstyou = againstyouin;
+		this.netbet = netbetin;
 				
 	}
 	
-	public long getNetbet()
+	public double getNetbet()
 	{
 		return this.netbet;
 	}
@@ -54,7 +55,7 @@ public class Bet
 		return this.oppteam;
 	}
 	
-	public long getOdds()
+	public double getOdds()
 	{
 		return this.odds;
 	}
@@ -71,7 +72,7 @@ public class Bet
 	
 	//This constructor is designed to take the results of the query that loads regular bets and convert them in to the expected data.
 	//If a game has yet to be played (in the db the result is null), please pass -1132.
-	public Bet(String week, int result, int picked_home, String home_team, String away_team, long home_line, int bet_size)
+	public Bet(String week, int result, int picked_home, String home_team, String away_team, double home_line, double bet_size)
 	{
 		super();
 		
@@ -115,7 +116,7 @@ public class Bet
 			}
 			else if (result < home_line)
 			{
-				this.result = "Win";
+				this.result = "Loss";
 			}
 			else if (result == home_line)
 			{
@@ -123,7 +124,7 @@ public class Bet
 			}
 			else if (result > home_line)
 			{
-				this.result = "Loss";
+				this.result = "Win";
 			}
 			else
 			{
@@ -133,12 +134,12 @@ public class Bet
 		
 		
 		this.againstyou = "Your Bet!";
-		this.netbet = bet_size;
+		this.netbet = ((double)bet_size);
 	}
 	
 	//This constructor is designed to take the results of the query that loads house bets and convert them in to the expected data.
 	//If a game has yet to be played (in the db the result is null), please pass -1132.
-	public Bet(String week, int result, int picked_home, String home_team, String away_team, long home_line, String against, long netbet)
+	public Bet(String week, int result, int picked_home, String home_team, String away_team, double home_line, String against, double netbet)
 	{
 		super();
 		
@@ -181,7 +182,7 @@ public class Bet
 			}
 			else if (result < home_line)
 			{
-				this.result = "Win";
+				this.result = "Loss";
 			}
 			else if (result == home_line)
 			{
@@ -189,7 +190,7 @@ public class Bet
 			}
 			else if (result > home_line)
 			{
-				this.result = "Loss";
+				this.result = "Win";
 			}
 			else
 			{

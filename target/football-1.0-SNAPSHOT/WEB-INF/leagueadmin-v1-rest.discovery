@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/IIJAQUnfDM5dVeeiFaeezhSfx0U\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/7PJiJx1boY-1KuCfkVz-MRKP0tc\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -79,12 +79,12 @@
      "type": "string"
     },
     "netbet": {
-     "type": "string",
-     "format": "int64"
+     "type": "number",
+     "format": "double"
     },
     "odds": {
-     "type": "string",
-     "format": "int64"
+     "type": "number",
+     "format": "double"
     },
     "oppTeam": {
      "type": "string"
@@ -123,11 +123,26 @@
     "email": {
      "type": "string"
     },
+    "gains": {
+     "type": "string"
+    },
     "handle": {
      "type": "string"
     },
+    "losses": {
+     "type": "integer",
+     "format": "int32"
+    },
     "name": {
      "type": "string"
+    },
+    "pushes": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "wins": {
+     "type": "integer",
+     "format": "int32"
     }
    }
   },
