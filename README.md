@@ -1,6 +1,8 @@
 endpoints-skeleton
 ==================
 
+This is the branch.
+
 A skeleton application for Google Cloud Endpoints in Java.
 
 - [App Engine][1]
