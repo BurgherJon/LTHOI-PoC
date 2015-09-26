@@ -1,6 +1,6 @@
-com\football\League.class
 com\football\Game.class
-com\football\Bet.class
 com\football\YourFirstAPI.class
 com\football\Constants.class
+com\football\Bet.class
+com\football\League.class
 com\football\FootballUser.class

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/7PJiJx1boY-1KuCfkVz-MRKP0tc\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/aaPxRco-gDR6h_H-6U5W4ueEt5k\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -221,6 +221,33 @@
     }
    }
   },
+  "Record": {
+   "id": "Record",
+   "type": "object",
+   "properties": {
+    "username": {
+     "type": "string"
+    },
+    "winLoss": {
+     "type": "string"
+    },
+    "winnings": {
+     "type": "string"
+    }
+   }
+  },
+  "RecordCollection": {
+   "id": "RecordCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Record"
+     }
+    }
+   }
+  },
   "User": {
    "id": "User",
    "type": "object",
@@ -304,6 +331,17 @@
    "httpMethod": "GET",
    "response": {
     "$ref": "UserCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getStandings": {
+   "id": "leagueadmin.getStandings",
+   "path": "recordcollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "RecordCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

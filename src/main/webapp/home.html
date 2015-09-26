@@ -195,9 +195,47 @@
     		var theHTML = "";
     		
     		
-    		theHTML = "Thanks for clicking, still working on this though.";
-    		
-    		
+    		try
+    		{
+    			var odds = "";
+    			var theHTML = "";
+    			
+    			gapi.client.leagueadmin.getStandings().execute(function(resp)  
+        		{		
+        			if (!resp.code) 
+	               	{
+    	    			resp.items = resp.items || [];
+	    	   			
+    	    			if (resp.items.length > 0)    	    			
+    	    			{
+    	    				//setup the table structure.
+    	        			theHTML = '<div>Bets are now locked.  Here are your bets for the week:</div>'
+    	    				theHTML = '<table style="width:100%"><tr><td>User</td><td>Record</td><td>Winnings</td></tr>';
+    	    				
+    	    				for (var i=0;i<resp.items.length;i++)
+		       				{
+    	    						theHTML = theHTML + "<tr><td>" + resp.items[i].username + "</td><td>";
+    	    						theHTML = theHTML + resp.items[i].winLoss + "</td><td>" + resp.items[i].winnings + "</td></tr>" 
+	                   		}
+    	    				theHTML = theHTML + "</table>";
+    	    				document.getElementById('result').innerHTML = theHTML;
+	               		}
+    	    			else
+    	    			{
+    	    				document.getElementById('result').innerHTML = "Error: Didn't find anybody in your league!!!";
+    	    			}
+	               	}
+    	    		else
+        			{
+    	    			document.getElementById('debug').innerText = 'Error in retreiving standings from api 1';
+        			}
+        		});
+    		}
+    		catch(err)
+          	{
+    			document.getElementById('debug').innerText = 'Error in retreiving standings from api 2';
+          	}
+			
     		document.getElementById('result').innerHTML = theHTML;
     	}
     	

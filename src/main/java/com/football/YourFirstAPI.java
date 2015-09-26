@@ -9,6 +9,7 @@ import com.football.FootballUser;
 import com.football.League;
 import com.football.Bet;
 import com.football.Game;
+import com.football.Record;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1173,6 +1174,65 @@ public class YourFirstAPI
 	}
 	
 	
+	//Description
+	@ApiMethod(name="getStandings", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID})
+	public List<Record> getStandings (User guser) throws UnauthorizedException
+	{
+		List<Record> returners = new ArrayList<Record>();
+		
+		String strquery=null;
+		String strurl=null;
+				
+		try 
+		{
+				
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) 
+			{
+			    // Load the class that provides the new "jdbc:google:mysql://" prefix.
+			    Class.forName("com.mysql.jdbc.GoogleDriver");
+			    strurl = "jdbc:google:mysql://focal-acronym-94611:bedb?user=root";
+			} 
+			else {
+			    // Local MySQL instance to use during development.
+			    Class.forName("com.mysql.jdbc.Driver");
+			    strurl = "jdbc:mysql://127.0.0.1:3306/bedb?user=root";
+			}
+				
+				
+		} 
+		catch (ClassNotFoundException e) {
+			//Should be an exception.
+			returners.add(new Record(e.getMessage(), "Error", "Error"));
+			return returners;
+		}
+			
+		Connection conn = null;
+		try 
+		{
+			conn = DriverManager.getConnection(strurl);
+			ResultSet rs;
+						
+			//I shouldn't be assuming league_season_id = 1;
+			strquery = "SELECT lsu.email AS email FROM bedb1.User_League_Season_Maps lsu WHERE lsu.league_season_id = 1;";
+			
+			
+			rs = conn.createStatement().executeQuery(strquery);
+			while (rs.next())
+			{
+				//I shouldn't be assuming league_season_id = 1;
+				returners.add(new Record(rs.getString("email"), 1));
+			}
+						
+			conn.close();
+			return returners;
+		} 
+		catch (SQLException e) 
+		{
+			//Should be an exception.
+			returners.add(new Record(e.getMessage(), "Error", "Error"));
+			return returners;
+		}
+	}
 	
 	
 	
