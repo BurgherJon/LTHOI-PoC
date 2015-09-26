@@ -1,7 +1,7 @@
 endpoints-skeleton
 ==================
 
-This is the branch.
+This is the Dupe4Bojan Throw Away Copy.
 
 A skeleton application for Google Cloud Endpoints in Java.
 
