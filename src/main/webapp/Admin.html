@@ -6,13 +6,13 @@
 </style>
 </head>
 <body>
- 
+
     <table style="width:100%">
     	<tr>
     		<td style="width:80%" align="center">
        			Welcome to the Football Gambling App That Doesn't Have a House!
        			<br>The Admin Section!!!
-       			
+
        		</td>
        		<td style="width:20%"><div id="greeting">
        			<form action="javascript:void(0);">
@@ -22,9 +22,9 @@
        		</div></td>
     	</tr>
     	<tr>
-    		<td><div id="content">    			
+    		<td><div id="content">
     			<div id="result"></div>
-   				<div id="debug"></div>	
+   				<div id="debug"></div>
     		</div></td>
     		<td align="center">
     			<form action="javascript:void(0);">
@@ -37,59 +37,59 @@
     		</td>
     	</tr>
     </table>
-    
+
     <script type="text/javascript">
        	var scopes = 'https://www.googleapis.com/auth/userinfo.email';
-    	var client_id = '212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com';
+    	var client_id = '176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com';
 
-    	function signin(mode, callback) 
+    	function signin(mode, callback)
     	{
     	  	gapi.auth.authorize({client_id: client_id,scope: scopes, immediate: mode},callback);
     	}
-    
-    
-    	function init() 
+
+
+    	function init()
         {
-                //Parameters are APIName,APIVersion,CallBack function,API Root 
-                gapi.client.load('leagueadmin', 'v1', null, 'https://focal-acronym-94611.appspot.com/_ah/api');
-                
-                
+                //Parameters are APIName,APIVersion,CallBack function,API Root
+                gapi.client.load('leagueadmin', 'v1', null, 'https://axial-potential-94723.appspot.com/_ah/api');
+
+
                 var apisToLoad;
-            	var callback = function() 
+            	var callback = function()
             	{
-            	   if (--apisToLoad == 0) 
+            	   if (--apisToLoad == 0)
             	   {
             	     signin(true, hidelogin);
             	   }
             	}
-            	  
+
             	apisToLoad = 2;
-            	//Parameters are APIName,APIVersion,CallBack function,API Root 
-            	gapi.client.load('leagueadmin', 'v1', callback, 'https://focal-acronym-94611.appspot.com/_ah/api');
+            	//Parameters are APIName,APIVersion,CallBack function,API Root
+            	gapi.client.load('leagueadmin', 'v1', callback, 'https://axial-potential-94723.appspot.com/_ah/api');
             	gapi.client.load('oauth2','v2',callback);
-                
-                
-                document.getElementById('loginButton').onclick = function() 
+
+
+                document.getElementById('loginButton').onclick = function()
                 {
                 	signin(false, hidelogin);
                 }
-                document.getElementById('submitter').onclick = function() 
+                document.getElementById('submitter').onclick = function()
                 {
                 	loadnextgame();
                 }
-                document.getElementById('done').onclick = function() 
+                document.getElementById('done').onclick = function()
                 {
                 	done();
                 }
         }
-        
-        
-        
+
+
+
     	//This function is called automatically when initializing the page or if the user pushes the login button.
     	//If the user is successfuly logged in than this function will use their email to fetch their handle and display it in the window.
       	//If the user is not logged in it will instead display the login button.
       	//If the user is logged in, but does not have an entry in the table it will show an error.
-      	function hidelogin() 
+      	function hidelogin()
         {
 	   		//If the user is logged in take away the login button and add the user's handle in the welcome area.
     		var request = gapi.client.oauth2.userinfo.get().execute(function(resp)
@@ -99,17 +99,17 @@
       		   		// User is signed in, so hide the button
       		   		document.getElementById('loginButton').style.visibility = 'hidden';
       		   		game = 0;
-      		   		loadnextgame()  		
+      		   		loadnextgame()
       		   	}
-      		   	else 
+      		   	else
       		   	{
       		   		document.getElementById('loginButton').style.visibility = '';
       		   	}
       		});
 
         }
-    	
-    	
+
+
     	function loadnextgame()
     	{
     		//If this is where we are then the person is in the process of putting in new games.
@@ -120,19 +120,19 @@
          	    requestData.home_team = document.getElementById('inputer1').value;
          	    requestData.away_team = document.getElementById('inputer2').value;
          	    requestData.home_line =  document.getElementById('inputer3').value;
-            			
+
             	gapi.client.leagueadmin.addGame(requestData).execute(function(resp) {});
-            	
+
             	document.getElementById('inputer1').value = '';
           		document.getElementById('inputer2').value = '';
           		document.getElementById('inputer3').value = '';
     		}
-    		
-    		
+
+
     		//If we're  just arriving at the add next week's games section, then remove any games that are already in there, add the last game, setup the new input screen.
     		else if (game == -1)
     		{
-    			
+
     			try
         		{
         			//Build the Request Object
@@ -140,29 +140,29 @@
      	            requestData.week = context_week;
      	            requestData.home_team = context_home_team;
      	            requestData.result =  document.getElementById('inputer1').value
-        			
-        			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});		
-        		}		
+
+        			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});
+        		}
         		catch(err)
               	{
         			document.getElementById('debug').innerText = document.getElementById('debug').innerText + 'Failed to set score.';
               	}
-    			
-    			
+
+
     			gapi.client.leagueadmin.clearnextweeksgames().execute(function(resp) {});
-    			
+
     			document.getElementById('inputer1text').innerText = 'Home:';
           		document.getElementById('inputer2text').innerText = 'Away:';
           		document.getElementById('inputer3text').innerText = 'Line:';
           		document.getElementById('inputer2').visibility = 'visible';
           		document.getElementById('inputer3').visibility = 'visible';
           		document.getElementById('content').innerText = 'Use the inputs on the right to submit all of the games.';
-    			         		
+
           		game = -2
     		}
-    		
+
     		else if (game > 0)
-    		{	
+    		{
     			try
         		{
         			//Build the Request Object
@@ -170,39 +170,39 @@
      	            requestData.week = context_week;
      	            requestData.home_team = context_home_team;
      	            requestData.result =  document.getElementById('inputer1').value
-        			
-        			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});		
-        		}		
+
+        			gapi.client.leagueadmin.setGameResult(requestData).execute(function(resp) {});
+        		}
         		catch(err)
               	{
         			document.getElementById('debug').innerText = document.getElementById('debug').innerText + 'Failed to set score.';
               	}
     		}
-    		
+
     		if (game > -1)
     		{
     			try
            		{
-    				gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)  
-        			{		
-        				if (!resp.code) 
+    				gapi.client.leagueadmin.getThisWeeksGames().execute(function(resp)
+        			{
+        				if (!resp.code)
 	               		{
     	    				resp.items = resp.items || [];
-	    	   				
+
     	    				document.getElementById('result').innerText = 'On the right side, please input the actual line between the ' + resp.items[game].homeTeam + ' and the ' + resp.items[game].awayTeam + '.';
     	    				context_home_team = resp.items[game].homeTeam;
     	    				context_week = resp.items[game].week;
-    	    				
+
     	    				game++;
-    	    				
+
     	    				if (game==(resp.items.length))
     	    				{
-    	    					game = -1;	
+    	    					game = -1;
     	    				}
-    	    				
-    	    				
-	    	   			
-	    	
+
+
+
+
 	               		}
     	    			else
         				{
@@ -214,29 +214,29 @@
           		{
           			document.getElementById('greetingtext').innerText = 'Error: Nothing in Result Set';
           		}
-          		
+
           		document.getElementById('inputer1').value = '';
           		document.getElementById('inputer1text').innerText = 'Result:';
           		document.getElementById('inputer2text').innerText = '';
           		document.getElementById('inputer3text').innerText = '';
           		document.getElementById('inputer2').visibility = 'hidden';
           		document.getElementById('inputer3').visibility = 'hidden';
-          		
-          		
-          		
-          		
+
+
+
+
     		}
-    		
+
     	}
-    	
+
     	function done()
     	{
     		gapi.client.leagueadmin.nextweek().execute(function(resp) {});
     	}
-    	
-    </script>	
+
+    </script>
     <script src="https://apis.google.com/js/client.js?onload=init"></script>
-    
-    
+
+
 </body>
 </html>

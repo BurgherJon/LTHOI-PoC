@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/aaPxRco-gDR6h_H-6U5W4ueEt5k\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/xG4bmevxfq7QEhjMF_OT67_Q07s\"",
  "discoveryVersion": "v1",
  "id": "leagueadmin:v1",
  "name": "leagueadmin",
@@ -11,9 +11,9 @@
   "x32": "http://www.google.com/images/icons/product/search-32.gif"
  },
  "protocol": "rest",
- "baseUrl": "https://focal-acronym-94611.appspot.com/_ah/api/leagueadmin/v1/",
+ "baseUrl": "https://axial-potential-94723.appspot.com/_ah/api/leagueadmin/v1/",
  "basePath": "/_ah/api/leagueadmin/v1/",
- "rootUrl": "https://focal-acronym-94611.appspot.com/_ah/api/",
+ "rootUrl": "https://axial-potential-94723.appspot.com/_ah/api/",
  "servicePath": "leagueadmin/v1/",
  "batchPath": "batch",
  "parameters": {

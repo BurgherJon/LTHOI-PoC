@@ -1,4 +1,5 @@
 com\football\Game.class
+com\football\Record.class
 com\football\YourFirstAPI.class
 com\football\Constants.class
 com\football\Bet.class
