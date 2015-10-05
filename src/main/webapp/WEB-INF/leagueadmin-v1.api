@@ -1,13 +1,13 @@
 {
   "extends" : "thirdParty.api",
   "abstract" : false,
-  "root" : "https://focal-acronym-94611.appspot.com/_ah/api",
+  "root" : "https://axial-potential-94723.appspot.com/_ah/api",
   "name" : "leagueadmin",
   "version" : "v1",
   "description" : "An API to manage the leagues",
   "defaultVersion" : false,
   "adapter" : {
-    "bns" : "https://focal-acronym-94611.appspot.com/_ah/spi",
+    "bns" : "https://axial-potential-94723.appspot.com/_ah/spi",
     "deadline" : 65.0,
     "type" : "lily"
   },
@@ -31,7 +31,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.getUser",
       "request" : {
         "body" : "empty"
@@ -46,7 +46,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.makebet",
       "request" : {
         "parameters" : {
@@ -67,7 +67,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.getUserBets",
       "request" : {
         "parameters" : {
@@ -92,7 +92,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.setGameResult",
       "request" : {
         "parameters" : {
@@ -121,7 +121,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.addGame",
       "request" : {
         "parameters" : {
@@ -150,7 +150,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.nextweek",
       "request" : {
         "body" : "empty"
@@ -165,7 +165,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.getStandings",
       "request" : {
         "body" : "empty"
@@ -231,7 +231,7 @@
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
-      "clientIds" : [ "212370171378-ap7khd2mnqd3ogd1bskkgfdm0ql270eo.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
+      "clientIds" : [ "176776142358-m82bppei5uu4au6bq3p4utvgqojjgfbp.apps.googleusercontent.com", "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.football.YourFirstAPI.clearnextweeksgames",
       "request" : {
         "body" : "empty"
